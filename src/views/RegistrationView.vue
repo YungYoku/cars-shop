@@ -2,7 +2,7 @@
   <div class="registration">
     <h2>Регистрация</h2>
 
-    <form novalidate @submit.prevent="submit">
+    <v-form novalidate @submit.prevent="submit">
       <v-text-field
         v-model.trim="name"
         :error-messages="nameErrors"
@@ -30,7 +30,7 @@
       <router-link class="swap" to="/login">
         <h5>Есть аккаунт? Войти.</h5>
       </router-link>
-    </form>
+    </v-form>
   </div>
 </template>
 
@@ -111,7 +111,9 @@ export default {
 
   watch: {
     emailExists() {
-      this.v$.$touch();
+      this.v$.name.touch();
+      this.v$.email.touch();
+      this.v$.password.touch();
     },
   },
 

@@ -2,7 +2,7 @@
   <div class="login">
     <h2>Логин</h2>
 
-    <form novalidate @submit.prevent="submit">
+    <v-form novalidate @submit.prevent="submit">
       <v-text-field
         v-model.trim="email"
         :error-messages="emailErrors"
@@ -22,7 +22,7 @@
       <router-link class="swap" to="/registration">
         <h5>Нет аккаунта? Зарегистрироваться.</h5>
       </router-link>
-    </form>
+    </v-form>
   </div>
 </template>
 
@@ -76,7 +76,8 @@ export default {
 
   watch: {
     wrongPassword() {
-      this.v$.$touch();
+      this.v$.email.touch();
+      this.v$.password.touch();
     },
   },
 

@@ -8,9 +8,7 @@
           <v-spacer />
 
           <v-btn v-for="icon in icons" :key="icon" class="mx-4" dark icon>
-            <v-icon size="24px">
-              {{ icon }}
-            </v-icon>
+            <v-icon :icon="icon" size="24px" />
           </v-btn>
         </v-card-title>
 
