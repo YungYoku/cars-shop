@@ -111,19 +111,24 @@ export default {
 
   watch: {
     emailExists() {
-      this.v$.name.touch();
-      this.v$.email.touch();
-      this.v$.password.touch();
+      this.showFormErrors();
     },
   },
 
   methods: {
+    showFormErrors() {
+      this.v$.name.touch();
+      this.v$.email.touch();
+      this.v$.password.touch();
+    },
+
     async submit() {
       this.$store.commit("resetAuthErrors");
 
       const isFormCorrect = await this.v$.$validate();
+      console.log(isFormCorrect);
       if (!isFormCorrect) {
-        this.v$.$touch();
+        this.showFormErrors();
       } else {
         const info = {
           email: this.email,

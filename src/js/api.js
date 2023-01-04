@@ -6,9 +6,11 @@ export async function postData(url, body = {}, loading) {
     store.commit("startLoading");
   }
   let response = {};
-  await axios.post(url, { ...body }).then((data) => {
-    response = data.content;
-  });
+  await axios
+    .post(`https://catalogauto.we-demonstrate2.ru/api/${url}`, { ...body })
+    .then((data) => {
+      response = data.content;
+    });
 
   if (loading) {
     store.commit("endLoading");
@@ -23,7 +25,7 @@ export async function getData(url, params = {}, loading) {
 
   let response = { models: [], brands: [], cars: [] };
   await axios
-    .get(url, { params })
+    .get(`https://catalogauto.we-demonstrate2.ru/api/${url}`, { params })
     .then((data) => {
       response = data.content;
     })
