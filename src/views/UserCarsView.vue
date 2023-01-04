@@ -1,0 +1,185 @@
+<template>
+  <div class="userCars">
+    <span v-if="!myCars.length">Пусто</span>
+
+    <div v-else class="wrap">
+      <v-card
+        v-for="(car, i) in myCars"
+        :key="car.id + i"
+        :style="{ marginBottom: '20px' }"
+        class="mx-auto"
+        min-width="240"
+        width="100%"
+      >
+        <v-img :src="car.image" class="white--text align-end" height="200px">
+          <v-card-title>{{ car.model }}</v-card-title>
+        </v-img>
+
+        <v-card-subtitle class="pb-0">
+          {{ car.generation }}
+        </v-card-subtitle>
+
+        <v-card-text class="text--primary">
+          <div>Страна: {{ car.country }}</div>
+
+          <div>Дверей: {{ car.door }}</div>
+
+          <div>Сидений: {{ car.seat }}</div>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-btn icon text @click="showPopup(car.id)">
+            <v-icon size="24px">mdi-minus</v-icon>
+          </v-btn>
+
+          <v-btn
+            v-if="!isItMyFavorite(car.id)"
+            icon
+            text
+            @click="addFavorite(car.id)"
+          >
+            <v-icon size="24px">mdi-bookmark</v-icon>
+          </v-btn>
+
+          <v-btn v-else icon text @click="removeFavorite(car.id)">
+            <v-icon size="24px">mdi-delete</v-icon>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </div>
+
+    <div class="alertBottom">
+      <v-alert
+        :value="alert"
+        border="left"
+        bottom="20px"
+        color="error accent-4"
+        colored-border
+        elevation="2"
+        transition="scale-transition"
+      >
+        <v-btn class="button" color="error" depressed @click="removeCar">
+          Подтвердить
+        </v-btn>
+
+        <v-btn class="button" color="success" depressed @click="hidePopup">
+          Отменить
+        </v-btn>
+      </v-alert>
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapGetters } from "vuex";
+
+export default {
+  name: "user-cars-view",
+
+  data() {
+    return {
+      alert: false,
+      carId: "",
+    };
+  },
+
+  computed: {
+    ...mapGetters({ id: "id", myCars: "myCars/cars" }),
+  },
+
+  watch: {
+    cars() {
+      this.hidePopup();
+    },
+  },
+
+  created() {
+    this.$store.dispatch("myCars/load", this.id);
+  },
+
+  methods: {
+    isItMyFavorite(id) {
+      const favorite = this.$store.getters["favorite/favorite"];
+      return favorite.find((car) => car.id === id);
+    },
+
+    removeCar() {
+      this.$store.dispatch("myCars/remove", {
+        user_id: this.id,
+        generation_id: this.carId,
+      });
+      this.hidePopup();
+    },
+
+    addFavorite(generation_id) {
+      this.$store.dispatch("favorite/add", { user_id: this.id, generation_id });
+    },
+
+    removeFavorite(generation_id) {
+      this.$store.dispatch("favorite/remove", {
+        user_id: this.id,
+        generation_id,
+      });
+    },
+
+    showPopup(id) {
+      this.alert = true;
+      this.carId = id;
+    },
+
+    hidePopup() {
+      this.alert = false;
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.userCars {
+  padding: 20px;
+
+  .wrap {
+    margin: 0 0 10px 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto;
+    grid-gap: 20px;
+  }
+
+  .alertBottom {
+    left: calc(50% - 170px);
+    position: fixed;
+    bottom: 20px;
+    z-index: 10;
+
+    .button {
+      margin: 0 10px;
+    }
+  }
+
+  @media screen and(max-width: 1320px) {
+    .wrap {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: auto;
+    }
+  }
+
+  @media screen and(max-width: 1024px) {
+    .wrap {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+    }
+  }
+
+  @media screen and(max-width: 400px) {
+    .alertBottom {
+      width: 200px;
+      left: calc(50% - 100px);
+
+      .button {
+        margin: 10px;
+      }
+    }
+  }
+}
+</style>

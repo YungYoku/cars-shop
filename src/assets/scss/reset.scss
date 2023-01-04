@@ -1,0 +1,42 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  box-sizing: border-box;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #788bff #bfd7ff;
+}
+
+*::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #bfd7ff;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #788bff;
+}
+
+html {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+button {
+  background-color: transparent;
+  transition: all 0.2s;
+}
+
+a,
+button {
+  cursor: pointer;
+}
