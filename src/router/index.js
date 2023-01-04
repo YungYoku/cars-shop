@@ -86,7 +86,7 @@ const routes = [
   },
 
   {
-    path: "*",
+    path: "/404",
     name: "Page404",
     component: () => import("../views/Page404View.vue"),
     meta: {
@@ -108,7 +108,7 @@ const cleanStorage = () => {
 
 router.beforeEach((to, from, next) => {
   const logged = !!localStorage.access_token && !!localStorage.id;
-  console.log("e");
+
   if (to.name === "Page404") {
     next();
   } else if (!to.meta.auth) {

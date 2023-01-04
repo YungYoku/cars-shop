@@ -1,13 +1,12 @@
-import Vue from "vue";
+import axios from "axios";
 import store from "../store";
 
 export async function postData(url, body = {}, loading) {
   if (loading) {
     store.commit("startLoading");
   }
-
   let response = {};
-  await Vue.http
+  await axios
     .post(url, { ...body })
     .then((response) => response.json())
     .then((data) => {
@@ -26,7 +25,7 @@ export async function getData(url, params = {}, loading) {
   }
 
   let response = { models: [], brands: [], cars: [] };
-  await Vue.http
+  await axios
     .get(url, { params })
     .then((response) => response.json())
     .then((data) => {

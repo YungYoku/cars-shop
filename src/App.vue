@@ -25,10 +25,6 @@ export default {
       return this.$route.meta.layout || "default";
     },
   },
-
-  mounted() {
-    console.log("e");
-  },
 };
 </script>
 
