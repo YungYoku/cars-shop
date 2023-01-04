@@ -6,12 +6,9 @@ export async function postData(url, body = {}, loading) {
     store.commit("startLoading");
   }
   let response = {};
-  await axios
-    .post(url, { ...body })
-    .then((response) => response.json())
-    .then((data) => {
-      response = data.content;
-    });
+  await axios.post(url, { ...body }).then((data) => {
+    response = data.content;
+  });
 
   if (loading) {
     store.commit("endLoading");
@@ -27,7 +24,6 @@ export async function getData(url, params = {}, loading) {
   let response = { models: [], brands: [], cars: [] };
   await axios
     .get(url, { params })
-    .then((response) => response.json())
     .then((data) => {
       response = data.content;
     })

@@ -29,9 +29,12 @@
 <script>
 import { mapGetters } from "vuex";
 import { email, minLength, required } from "@vuelidate/validators";
+import { useVuelidate } from "@vuelidate/core";
 
 export default {
   name: "login-view",
+
+  setup: () => ({ v$: useVuelidate() }),
 
   validations: {
     email: { required, email },
@@ -54,34 +57,36 @@ export default {
 
     emailErrors() {
       const errors = [];
-      if (!this.$v.email.$dirty) return errors;
-      !this.$v.email.email && errors.push("E-mail должен быть валидным.");
-      !this.$v.email.required && errors.push("E-mail отсутствует.");
+      if (!this.v$.email.$dirty) return errors;
+      !this.v$.email.email && errors.push("E-mail должен быть валидным.");
+      !this.v$.email.required && errors.push("E-mail отсутствует.");
       return errors;
     },
 
     passwordErrors() {
       const errors = [];
-      if (!this.$v.password.$dirty) return errors;
-      !this.$v.password.minLength &&
+      if (!this.v$.password.$dirty) return errors;
+      !this.v$.password.minLength &&
         errors.push("Минимальная длина пароля 8 символов.");
-      !this.$v.password.required && errors.push("Пароль отсутствует.");
-      !this.$v.password.correctPassword && errors.push("Неправильный пароль.");
+      !this.v$.password.required && errors.push("Пароль отсутствует.");
+      !this.v$.password.correctPassword && errors.push("Неправильный пароль.");
       return errors;
     },
   },
 
   watch: {
     wrongPassword() {
-      this.$v.$touch();
+      this.v$.$touch();
     },
   },
 
   methods: {
-    submit() {
+    async submit() {
       this.$store.commit("resetAuthErrors");
-      if (this.$v.$invalid) {
-        this.$v.$touch();
+
+      const isFormCorrect = await this.v$.$validate();
+      if (!isFormCorrect) {
+        this.v$.$touch();
       } else {
         const info = {
           email: this.email,
