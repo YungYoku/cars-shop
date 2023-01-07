@@ -8,6 +8,8 @@ import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 
 const app = createApp(App);
 app.use(router);
@@ -26,31 +28,16 @@ const vuetify = createVuetify({
 });
 app.use(vuetify);
 
-//app.http.options.root = "https://catalogauto.we-demonstrate2.ru/api/";
+const firebaseConfig = {
+  apiKey: "AIzaSyDUuADedlg4-VSS3pK_hCu0i3LrXnKsGVg",
+  authDomain: "car-shop-1.firebaseapp.com",
+  projectId: "car-shop-1",
+  storageBucket: "car-shop-1.appspot.com",
+  messagingSenderId: "291678313321",
+  appId: "1:291678313321:web:fe006f4e4d4971f3d2fbf8",
+};
 
-// app.http.interceptors.before = function (request) {
-//   if (this.previousRequest) {
-//     this.previousRequest.abort();
-//   }
-//   this.previousRequest = request;
-// };
-//
-// app.http.interceptors.push((request, next) => {
-//   const access_token = localStorage.access_token || "";
-//   const exception = request.url === "user/update-tokens";
-//
-//   if (access_token !== "" && !exception) {
-//     request.headers.set("Authorization", access_token);
-//   }
-//
-//   next((response) => {
-//     if (response.status === 403) {
-//       localStorage.removeItem("access_token");
-//       localStorage.removeItem("id");
-//       sessionStorage.removeItem("refresh_token");
-//       router.push("/login");
-//     }
-//   });
-// });
+initializeApp(firebaseConfig);
+export const db = getFirestore();
 
 app.mount("#app");

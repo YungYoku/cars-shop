@@ -5,7 +5,7 @@
       <v-autocomplete
         v-model="model"
         :clearable="true"
-        :item-text="carNamesList.text"
+        :item-title="carNamesList.title"
         :item-value="carNamesList.value"
         :items="carNamesList"
         label="Модель"
@@ -22,7 +22,7 @@
       <div class="filter">
         <v-select
           v-model="filters.volume"
-          :item-text="volumes.text"
+          :item-title="volumes.title"
           :item-value="volumes.value"
           :items="volumes"
           label="Объем двигателя"
@@ -43,7 +43,7 @@
       <div class="filter">
         <v-select
           v-model="filters.transmission"
-          :item-text="transmissions.text"
+          :item-title="transmissions.title"
           :item-value="transmissions.value"
           :items="transmissions"
           label="Трансмиссия"
@@ -64,7 +64,7 @@
       <div class="filter">
         <v-select
           v-model="filters.engine"
-          :item-text="engines.text"
+          :item-title="engines.title"
           :item-value="engines.value"
           :items="engines"
           label="Двигатель"
@@ -85,7 +85,7 @@
       <div class="filter">
         <v-select
           v-model="filters.body"
-          :item-text="bodys.text"
+          :item-title="bodys.title"
           :item-value="bodys.value"
           :items="bodys"
           label="Корпус"
@@ -222,14 +222,14 @@ export default {
     const brandName = this.$route.query.brandName;
     const brandId = this.$route.query.brandId;
 
-    if (brandName && brandId) {
-      this.$store.dispatch("filters/loadCars", {
-        brandName,
-        brandId,
-      });
-    } else {
-      this.resetFilters();
-    }
+    // if (brandName && brandId) {
+    //   this.$store.dispatch("filters/loadCars", {
+    //     brandName,
+    //     brandId,
+    //   });
+    // } else {
+    //   this.resetFilters();
+    // }
   },
 
   methods: {

@@ -1,11 +1,12 @@
 <template>
   <div class="login">
-    <h2>Логин</h2>
+    <h2>Вход</h2>
 
     <v-form novalidate @submit.prevent="submit">
       <v-text-field
         v-model.trim="email"
         :error-messages="emailErrors"
+        :rules="[() => !!email || 'Почта отсутствует.']"
         label="E-mail"
         required
       />
@@ -13,13 +14,22 @@
       <v-text-field
         v-model.trim="password"
         :error-messages="passwordErrors"
+        :rules="[
+          () => !!password || 'Пароль отсутствует.',
+          () => password.length >= 6 || 'Пароль меньше 6 символов.',
+          () =>
+            /[A-Z]/.test(password) || 'Пароль должен содержать заглавные буквы',
+          () =>
+            /[a-z]/.test(password) || 'Пароль должен содержать прописные буквы',
+          () => /[0-9]/.test(password) || 'Пароль должен содержать цифры',
+        ]"
         label="Пароль"
         required
         type="password"
       />
 
-      <v-btn class="btnSubmit" type="submit">Логин</v-btn>
-      <router-link class="swap" to="/registration">
+      <v-btn class="btnSubmit" type="submit">Войти</v-btn>
+      <router-link class="swap" to="/reg">
         <h5>Нет аккаунта? Зарегистрироваться.</h5>
       </router-link>
     </v-form>
@@ -28,8 +38,9 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { email, minLength, required } from "@vuelidate/validators";
+import { minLength, required } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 export default {
   name: "login-view",
@@ -37,12 +48,18 @@ export default {
   setup: () => ({ v$: useVuelidate() }),
 
   validations: {
-    email: { required, email },
+    email: { required },
     password: {
       required,
-      minLength: minLength(8),
-      correctPassword: function () {
-        return !this.wrongPassword;
+      minLength: minLength(6),
+      containsUppercase: function (value) {
+        return /[A-Z]/.test(value);
+      },
+      containsLowercase: function (value) {
+        return /[a-z]/.test(value);
+      },
+      containsNumber: function (value) {
+        return /[0-9]/.test(value);
       },
     },
   },
@@ -50,35 +67,12 @@ export default {
   data: () => ({
     email: "",
     password: "",
+    emailErrors: "",
+    passwordErrors: "",
   }),
 
   computed: {
     ...mapGetters({ wrongPassword: "wrongPassword" }),
-
-    emailErrors() {
-      const errors = [];
-      if (!this.v$.email.$dirty) return errors;
-      !this.v$.email.email && errors.push("E-mail должен быть валидным.");
-      !this.v$.email.required && errors.push("E-mail отсутствует.");
-      return errors;
-    },
-
-    passwordErrors() {
-      const errors = [];
-      if (!this.v$.password.$dirty) return errors;
-      !this.v$.password.minLength &&
-        errors.push("Минимальная длина пароля 8 символов.");
-      !this.v$.password.required && errors.push("Пароль отсутствует.");
-      !this.v$.password.correctPassword && errors.push("Неправильный пароль.");
-      return errors;
-    },
-  },
-
-  watch: {
-    wrongPassword() {
-      this.v$.email.touch();
-      this.v$.password.touch();
-    },
   },
 
   methods: {
@@ -86,14 +80,14 @@ export default {
       this.$store.commit("resetAuthErrors");
 
       const isFormCorrect = await this.v$.$validate();
-      if (!isFormCorrect) {
-        this.v$.$touch();
-      } else {
-        const info = {
-          email: this.email,
-          password: this.password,
-        };
-        this.$store.dispatch("login", info);
+      if (isFormCorrect) {
+        signInWithEmailAndPassword(getAuth(), this.email, this.password).then(
+          async (response) => {
+            const uid = response.user.uid;
+            this.$store.commit("setUid", uid);
+            await this.$router.push("/");
+          }
+        );
       }
     },
   },
@@ -108,14 +102,14 @@ export default {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding-bottom: calc(5vh + 70px);
+  gap: 20px;
+  padding: 50px 0 50px 0;
 
   h2 {
-    font-size: 70px;
+    font-size: 32px;
     font-weight: 500;
     color: #999999;
     text-align: center;
-    margin: 10vh 0 5vh 0;
   }
 
   form {
@@ -129,7 +123,8 @@ export default {
     border-radius: 30px;
     display: grid;
     grid-template: 70px 70px 90px 30px / 1fr;
-    box-shadow: 0 14px 20px 6px #999999;
+    box-shadow: 0 10px 20px 6px #dddddd;
+    grid-gap: 15px;
 
     label img {
       width: 20px;

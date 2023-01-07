@@ -24,7 +24,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import CarsAreaCard from "@/components/home/CarsAreaCard";
+import CarsAreaCard from "@/components/home/CarsAreaCard.vue";
 
 export default {
   name: "cars-area",
@@ -97,7 +97,7 @@ export default {
     padding: 0 20px 10px 20px;
   }
 
-  @media screen and(max-width: 1200px) {
+  @media (max-width: 1200px) {
     padding: 0 20px 50px 20px;
 
     .wrap {
@@ -106,13 +106,13 @@ export default {
     }
   }
 
-  @media screen and(max-width: 880px) {
+  @media (max-width: 880px) {
     .wrap {
       grid-template: repeat(9, auto) / 1fr;
     }
   }
 
-  @media screen and(max-width: 768px) {
+  @media (max-width: 768px) {
     padding: 0 0 50px 0;
   }
 }

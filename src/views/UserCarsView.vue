@@ -157,21 +157,21 @@ export default {
     }
   }
 
-  @media screen and(max-width: 1320px) {
+  @media (max-width: 1320px) {
     .wrap {
       grid-template-columns: repeat(2, 1fr);
       grid-template-rows: auto;
     }
   }
 
-  @media screen and(max-width: 1024px) {
+  @media (max-width: 1024px) {
     .wrap {
       grid-template-columns: 1fr;
       grid-template-rows: auto;
     }
   }
 
-  @media screen and(max-width: 400px) {
+  @media (max-width: 400px) {
     .alertBottom {
       width: 200px;
       left: calc(50% - 100px);

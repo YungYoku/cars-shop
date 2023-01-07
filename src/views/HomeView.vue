@@ -29,7 +29,7 @@ export default {
   grid-template: auto / 200px 1fr;
   padding: 20px 0;
 
-  @media screen and (max-width: 768px) {
+  @media (max-width: 768px) {
     grid-template: auto auto / 1fr;
   }
 }

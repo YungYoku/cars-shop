@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    <v-footer dark padless>
+    <v-footer dark padless="true">
       <v-card class="flex" flat tile>
         <v-card-title class="footer_info">
           <strong class="subheading">Присоединись!</strong>

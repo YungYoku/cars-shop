@@ -8,12 +8,11 @@ import myCars from "./myCars.js";
 
 export default createStore({
   state: {
-    logged: !!localStorage.access_token,
+    logged: !!localStorage.uid,
     loading: false,
 
     user: {
-      id: localStorage.id ? localStorage.id : 0,
-      email: "",
+      uid: localStorage.uid || "",
       name: "",
       date: "",
     },
@@ -25,8 +24,9 @@ export default createStore({
   },
 
   mutations: {
-    setLogged(state, condition) {
-      state.logged = condition;
+    setUid(state, uid) {
+      localStorage.uid = uid;
+      state.uid = uid;
     },
 
     startLoading(state) {
@@ -110,12 +110,13 @@ export default createStore({
 
     reset({ state, commit }) {
       state.logged = false;
+
       state.user = {
-        id: 0,
-        email: "",
+        uid: "",
         name: "",
         date: "",
       };
+
       state.authErrors = {
         wrongPassword: false,
         emailExists: false,

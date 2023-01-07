@@ -42,7 +42,7 @@ const routes = [
   },
 
   {
-    path: "/registration",
+    path: "/reg",
     name: "Registration",
     component: () => import("../views/RegistrationView.vue"),
     meta: {
@@ -102,29 +102,27 @@ const router = createRouter({
   routes,
 });
 
-const cleanStorage = () => {
-  localStorage.clear();
-};
-
-router.beforeEach((to, from, next) => {
-  const logged = !!localStorage.access_token && !!localStorage.id;
+router.beforeEach((to) => {
+  const isLoggedIn = !!localStorage.uid;
 
   if (to.name === "Page404") {
-    next();
-  } else if (!to.meta.auth) {
-    if (logged) {
-      next("/");
-    } else {
-      cleanStorage();
-      next();
+    return true;
+  }
+
+  if (to.meta.auth) {
+    if (isLoggedIn) {
+      return true;
     }
-  } else {
-    if (logged) {
-      next();
-    } else {
-      cleanStorage();
-      next("/login");
+
+    return "/login";
+  }
+
+  if (!to.meta.auth) {
+    if (isLoggedIn) {
+      return "/";
     }
+
+    return true;
   }
 });
 

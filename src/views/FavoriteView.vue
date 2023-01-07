@@ -99,14 +99,14 @@ export default {
     grid-gap: 20px;
   }
 
-  @media screen and(max-width: 1320px) {
+  @media (max-width: 1320px) {
     .wrap {
       grid-template-columns: repeat(2, 1fr);
       grid-template-rows: auto;
     }
   }
 
-  @media screen and(max-width: 1024px) {
+  @media (max-width: 1024px) {
     .wrap {
       grid-template-columns: 1fr;
       grid-template-rows: auto;

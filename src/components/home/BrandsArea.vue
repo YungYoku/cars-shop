@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import BrandsAreaCard from "@/components/home/BrandsAreaCard";
+import BrandsAreaCard from "@/components/home/BrandsAreaCard.vue";
 
 export default {
   name: "brands-area",
@@ -82,7 +82,7 @@ export default {
     padding: 0 20px;
   }
 
-  @media screen and(max-width: 1024px) {
+  @media (max-width: 1024px) {
     padding: 0 20px 50px 20px;
 
     .wrap {
@@ -91,13 +91,13 @@ export default {
     }
   }
 
-  @media screen and(max-width: 768px) {
+  @media (max-width: 768px) {
     .wrap {
       grid-template: repeat(9, auto) / 1fr;
     }
   }
 
-  @media screen and(max-width: 768px) {
+  @media (max-width: 768px) {
     padding: 0 0 50px 0;
   }
 }

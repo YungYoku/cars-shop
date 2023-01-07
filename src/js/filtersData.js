@@ -1,147 +1,147 @@
 export const bodys = [
   {
-    text: "Купе",
+    title: "Купе",
     value: "Купе",
   },
   {
-    text: "Родстер",
+    title: "Родстер",
     value: "Родстер",
   },
   {
-    text: "Седан",
+    title: "Седан",
     value: "Седан",
   },
   {
-    text: "Хэтчбек",
+    title: "Хэтчбек",
     value: "Хэтчбек",
   },
   {
-    text: "Внедорожник",
+    title: "Внедорожник",
     value: "Внедорожник",
   },
   {
-    text: "Универсал",
+    title: "Универсал",
     value: "Универсал",
   },
   {
-    text: "вариатоТарга",
+    title: "вариатоТарга",
     value: "вариатоТарга",
   },
   {
-    text: "Кабриолет",
+    title: "Кабриолет",
     value: "Кабриолет",
   },
   {
-    text: "Купе - хардтоп",
+    title: "Купе - хардтоп",
     value: "Купе - хардтоп",
   },
   {
-    text: "Минивэн",
+    title: "Минивэн",
     value: "Минивэн",
   },
   {
-    text: "Лифтбек",
+    title: "Лифтбек",
     value: "Лифтбек",
   },
   {
-    text: "Лимузин",
+    title: "Лимузин",
     value: "Лимузин",
   },
   {
-    text: "Пикап",
+    title: "Пикап",
     value: "Пикап",
   },
   {
-    text: "Компактвэн",
+    title: "Компактвэн",
     value: "Компактвэн",
   },
   {
-    text: "Спидстер",
+    title: "Спидстер",
     value: "Спидстер",
   },
   {
-    text: "Фастбек",
+    title: "Фастбек",
     value: "Фастбек",
   },
   {
-    text: "Седан - хардтоп",
+    title: "Седан - хардтоп",
     value: "Седан - хардтоп",
   },
   {
-    text: "Фаэтон",
+    title: "Фаэтон",
     value: "Фаэтон",
   },
   {
-    text: "Микровэн",
+    title: "Микровэн",
     value: "Микровэн",
   },
   {
-    text: "Фургон",
+    title: "Фургон",
     value: "Фургон",
   },
 ];
 
 export const engines = [
   {
-    text: "Бензин",
+    title: "Бензин",
     value: "бензин",
   },
   {
-    text: "Гибрид",
+    title: "Гибрид",
     value: "гибрид",
   },
   {
-    text: "Дизель",
+    title: "Дизель",
     value: "дизель",
   },
   {
-    text: "СУГ",
+    title: "СУГ",
     value: "бензин",
   },
   {
-    text: "Электро",
+    title: "Электро",
     value: "электро",
   },
 ];
 
 export const transmissions = [
   {
-    text: "Механика",
+    title: "Механика",
     value: "механика",
   },
   {
-    text: "Автомат",
+    title: "Автомат",
     value: "автомат",
   },
   {
-    text: "Робот",
+    title: "Робот",
     value: "робот",
   },
   {
-    text: "Вариатор",
+    title: "Вариатор",
     value: "вариатор",
   },
 ];
 
 export const volumes = [
   {
-    text: "1",
+    title: "1",
     value: "1.0",
   },
   {
-    text: "2",
+    title: "2",
     value: "2.0",
   },
   {
-    text: "3",
+    title: "3",
     value: "3.0",
   },
   {
-    text: "4",
+    title: "4",
     value: "4.0",
   },
   {
-    text: "5",
+    title: "5",
     value: "5.0",
   },
 ];
