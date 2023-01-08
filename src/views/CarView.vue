@@ -129,8 +129,8 @@ export default {
   },
 
   created() {
-    this.favoriteStore.load(this.userStore.uid).then(() => {
-      this.savedStore.load(this.userStore.uid).then(() => {
+    this.favoriteStore.update().then(() => {
+      this.savedStore.update().then(() => {
         this.load(this.routeBrandId, this.routeModelId);
       });
     });
