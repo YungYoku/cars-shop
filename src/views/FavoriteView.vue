@@ -28,13 +28,13 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-btn v-if="!isItMyCar(car.id)" icon text @click="addCar(car.id)">
+          <v-btn v-if="!isItMyCar(car)" icon text @click="addCar(car)">
             <v-icon size="24px">mdi-plus</v-icon>
           </v-btn>
-          <v-btn v-else icon text @click="removeCar(car.id)">
+          <v-btn v-else icon text @click="removeCar(car)">
             <v-icon size="24px">mdi-minus</v-icon>
           </v-btn>
-          <v-btn icon text @click="removeFavorite(car.id)">
+          <v-btn icon text @click="removeFavorite(car)">
             <v-icon size="24px">mdi-delete</v-icon>
           </v-btn>
         </v-card-actions>
@@ -67,16 +67,16 @@ export default {
       return myCars.find((car) => car.id === id);
     },
 
-    addCar(generation_id) {
-      this.savedStore.add(generation_id);
+    addCar(car) {
+      this.savedStore.add(car.brandId, car.modelId);
     },
 
-    removeCar(generation_id) {
-      this.savedStore.remove(generation_id);
+    removeCar(car) {
+      this.savedStore.remove(car.brandId, car.modelId);
     },
 
-    removeFavorite(generation_id) {
-      this.favoriteStore.remove(generation_id);
+    removeFavorite(car) {
+      this.favoriteStore.remove(car.brandId, car.modelId);
     },
   },
 };

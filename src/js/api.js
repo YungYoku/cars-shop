@@ -6,7 +6,6 @@ export function checkIsFiltersEmpty(filters) {
 
   keys.forEach((el) => (result &= filters[el].value === ""));
   keys.forEach((el) => (result &= filters[el].text === ""));
-
   return !!result;
 }
 

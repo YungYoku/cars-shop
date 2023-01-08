@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 import { useUserStore } from "@/store/user";
+import { db } from "@/main";
+import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 
 export const useSavedStore = defineStore("saved", {
   state: () => ({
@@ -19,26 +21,26 @@ export const useSavedStore = defineStore("saved", {
 
     async load(uid) {},
 
-    async add(generation_id) {
+    async add(brandId, modelId) {
       const userStore = useUserStore();
       const uid = userStore.uid;
-      // await postData("manager/add-ownership", {
-      //   user_id,
-      //   generation_id,
-      // });
+
+      await updateDoc(doc(db, "users", uid), {
+        saved: arrayUnion({ brandId, modelId }),
+      });
 
       await this.load(uid);
     },
 
-    async remove(generation_id) {
+    async remove(brandId, modelId) {
       const userStore = useUserStore();
       const uid = userStore.uid;
-      // await postData("manager/remove-ownership", {
-      //   user_id,
-      //   generation_id,
-      // });
 
-      const _cars = this.cars.filter((car) => car.id !== generation_id);
+      await updateDoc(doc(db, "users", uid), {
+        saved: arrayRemove({ brandId, modelId }),
+      });
+
+      const _cars = this.cars.filter((car) => car.id !== modelId);
       this.set(_cars);
     },
   },

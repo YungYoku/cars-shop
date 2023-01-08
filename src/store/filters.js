@@ -54,16 +54,6 @@ export const useFiltersStore = defineStore("filters", {
     },
 
     async loadBrands(brand = "") {
-      if (this.brands.length) {
-        this.resetCars();
-
-        this.setBrands(
-          this.brands.filter((item) => item.name.startsWith(brand))
-        );
-
-        return;
-      }
-
       const docRef = doc(db, "cars", "brands");
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {

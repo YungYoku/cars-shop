@@ -28,20 +28,20 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-btn icon text @click="showPopup(car.id)">
+          <v-btn icon text @click="showPopup(car)">
             <v-icon size="24px">mdi-minus</v-icon>
           </v-btn>
 
           <v-btn
-            v-if="!isItMyFavorite(car.id)"
+            v-if="!isItMyFavorite(car)"
             icon
             text
-            @click="addFavorite(car.id)"
+            @click="addFavorite(car)"
           >
             <v-icon size="24px">mdi-bookmark</v-icon>
           </v-btn>
 
-          <v-btn v-else icon text @click="removeFavorite(car.id)">
+          <v-btn v-else icon text @click="removeFavorite(car)">
             <v-icon size="24px">mdi-delete</v-icon>
           </v-btn>
         </v-card-actions>
@@ -87,7 +87,8 @@ export default {
   data() {
     return {
       alert: false,
-      carId: "",
+      brandId: "",
+      modelId: "",
     };
   },
 
@@ -102,27 +103,28 @@ export default {
   },
 
   methods: {
-    isItMyFavorite(id) {
+    isItMyFavorite(propsCar) {
       const favorite = this.favoriteStore.favorite;
-      return favorite.find((car) => car.id === id);
+      return favorite.find((car) => car.id === propsCar.modelId);
     },
 
     removeCar() {
-      this.savedStore.remove(this.carId);
+      this.savedStore.remove(this.brandId, this.modelId);
       this.hidePopup();
     },
 
-    addFavorite(generation_id) {
-      this.favoriteStore.add(generation_id);
+    addFavorite(car) {
+      this.favoriteStore.add(car.brandId, car.modelId);
     },
 
-    removeFavorite(generation_id) {
-      this.favoriteStore.remove(generation_id);
+    removeFavorite(car) {
+      this.favoriteStore.remove(car.brandId, car.modelId);
     },
 
-    showPopup(id) {
+    showPopup(car) {
       this.alert = true;
-      this.carId = id;
+      this.brandId = car.brandId;
+      this.modelId = car.modelId;
     },
 
     hidePopup() {

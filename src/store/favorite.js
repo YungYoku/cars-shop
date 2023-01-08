@@ -19,7 +19,7 @@ export const useFavoriteStore = defineStore("favorite", {
 
     async load(uid) {},
 
-    async add(generation_id) {
+    async add(brandId, modelId) {
       const userStore = useUserStore();
       const uid = userStore.uid;
       // await postData("manager/add-favorite", {
@@ -29,7 +29,7 @@ export const useFavoriteStore = defineStore("favorite", {
       await this.load(uid);
     },
 
-    async remove(generation_id) {
+    async remove(brandId, modelId) {
       const userStore = useUserStore();
       const uid = userStore.uid;
       // await postData("manager/remove-favorite", {
@@ -37,7 +37,7 @@ export const useFavoriteStore = defineStore("favorite", {
       //   generation_id,
       // });
 
-      const _favorite = this.favorite.filter((car) => car.id !== generation_id);
+      const _favorite = this.favorite.filter((car) => car.id !== modelId);
       this.set(_favorite);
     },
   },

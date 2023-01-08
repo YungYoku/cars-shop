@@ -135,19 +135,19 @@ export default {
 
   methods: {
     addCar() {
-      this.savedStore.add(this.pickedCar.id);
+      this.savedStore.add(this.routeBrandId, this.pickedCar.id);
     },
 
     removeCar() {
-      this.savedStore.remove(this.pickedCar.id);
+      this.savedStore.remove(this.routeBrandId, this.pickedCar.id);
     },
 
     addFavorite() {
-      this.favoriteStore.add(this.pickedCar.id);
+      this.favoriteStore.add(this.routeBrandId, this.pickedCar.id);
     },
 
     removeFavorite() {
-      this.favoriteStore.remove(this.pickedCar.id);
+      this.favoriteStore.remove(this.routeBrandId, this.pickedCar.id);
     },
 
     async load(brandId, modelId) {
