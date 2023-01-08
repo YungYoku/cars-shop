@@ -15,7 +15,7 @@ export const useUserStore = defineStore("user", {
 
   getters: {
     isLoggedIn() {
-      return !!this.uid;
+      return this.uid.length > 0;
     },
   },
 
@@ -27,6 +27,18 @@ export const useUserStore = defineStore("user", {
 
     updateUser(user) {
       this.user = user;
+    },
+
+    logout() {
+      this.uid = "";
+      this.user = {
+        favorite: [],
+        name: "",
+        regDate: "",
+        saved: [],
+        status: "",
+      };
+      localStorage.clear();
     },
   },
 });

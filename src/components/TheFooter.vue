@@ -45,8 +45,12 @@ export default {
   position: relative;
   z-index: 3;
 
-  .footer_info {
+  .v-footer {
     background-color: #788bff;
+
+    .v-card {
+      background: transparent;
+    }
   }
 }
 </style>

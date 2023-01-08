@@ -40,11 +40,19 @@
 <script>
 import { linksLogged, linksUnlogged } from "@/js/headerData.js";
 import { useUserStore } from "@/store/user";
+import { useFiltersStore } from "@/store/filters";
+import { useSavedStore } from "@/store/myCars";
+import { useFavoriteStore } from "@/store/favorite";
 
 export default {
   name: "the-header",
 
-  setup: () => ({ userStore: useUserStore() }),
+  setup: () => ({
+    userStore: useUserStore(),
+    filtersStore: useFiltersStore(),
+    savedStore: useSavedStore(),
+    favoriteStore: useFavoriteStore(),
+  }),
 
   data() {
     return {
@@ -71,8 +79,11 @@ export default {
 
   methods: {
     logout() {
-      this.userStore.$reset();
-      localStorage.clear();
+      this.userStore.logout();
+      this.filtersStore.$reset();
+      this.favoriteStore.$reset();
+      this.savedStore.$reset();
+      this.$router.push("/login");
     },
   },
 };

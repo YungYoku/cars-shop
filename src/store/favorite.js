@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useUserStore } from "@/store/user";
 
 export const useFavoriteStore = defineStore("favorite", {
   state: () => ({
@@ -16,17 +17,21 @@ export const useFavoriteStore = defineStore("favorite", {
       state.favorite = [];
     },
 
-    async load(user_id) {},
+    async load(uid) {},
 
-    async add({ user_id, generation_id }) {
+    async add(generation_id) {
+      const userStore = useUserStore();
+      const uid = userStore.uid;
       // await postData("manager/add-favorite", {
       //   user_id,
       //   generation_id,
       // });
-      await this.load(user_id);
+      await this.load(uid);
     },
 
-    async remove({ user_id, generation_id }) {
+    async remove(generation_id) {
+      const userStore = useUserStore();
+      const uid = userStore.uid;
       // await postData("manager/remove-favorite", {
       //   user_id,
       //   generation_id,

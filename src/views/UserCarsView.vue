@@ -108,25 +108,16 @@ export default {
     },
 
     removeCar() {
-      this.savedStore.remove({
-        user_id: this.userStore.uid,
-        generation_id: this.carId,
-      });
+      this.savedStore.remove(this.carId);
       this.hidePopup();
     },
 
     addFavorite(generation_id) {
-      this.favoriteStore.add({
-        user_id: this.userStore.uid,
-        generation_id,
-      });
+      this.favoriteStore.add(generation_id);
     },
 
     removeFavorite(generation_id) {
-      this.favoriteStore.remove({
-        user_id: this.userStore.uid,
-        generation_id,
-      });
+      this.favoriteStore.remove(generation_id);
     },
 
     showPopup(id) {

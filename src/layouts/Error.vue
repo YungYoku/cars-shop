@@ -29,6 +29,7 @@ export default {
 
   .main {
     height: 100%;
+    padding: 10px;
 
     display: flex;
     justify-content: space-between;

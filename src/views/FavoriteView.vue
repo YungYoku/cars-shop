@@ -44,7 +44,6 @@
 </template>
 
 <script>
-import { useUserStore } from "@/store/user";
 import { useSavedStore } from "@/store/myCars";
 import { useFavoriteStore } from "@/store/favorite";
 
@@ -52,7 +51,6 @@ export default {
   name: "favorite-view",
 
   setup: () => ({
-    userStore: useUserStore(),
     savedStore: useSavedStore(),
     favoriteStore: useFavoriteStore(),
   }),
@@ -70,24 +68,15 @@ export default {
     },
 
     addCar(generation_id) {
-      this.savedStore.add({
-        user_id: this.userStore.uid,
-        generation_id,
-      });
+      this.savedStore.add(generation_id);
     },
 
     removeCar(generation_id) {
-      this.savedStore.remove({
-        user_id: this.userStore.uid,
-        generation_id,
-      });
+      this.savedStore.remove(generation_id);
     },
 
     removeFavorite(generation_id) {
-      this.favoriteStore.remove({
-        user_id: this.userStore.uid,
-        generation_id,
-      });
+      this.favoriteStore.remove(generation_id);
     },
   },
 };

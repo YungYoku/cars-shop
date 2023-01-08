@@ -32,6 +32,7 @@ export default {
 
   .main {
     height: 100%;
+    padding: 10px;
   }
 }
 </style>
