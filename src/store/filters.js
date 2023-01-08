@@ -50,7 +50,6 @@ export const useFiltersStore = defineStore("filters", {
     reset() {
       this.brands = [];
       this.cars = [];
-      this.myCars = [];
     },
 
     async loadBrands(brand = "") {
