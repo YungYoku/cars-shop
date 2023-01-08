@@ -7,10 +7,8 @@
       width="100%"
     >
       <v-img
-        :lazy-src="require('../../assets/image.png')"
-        :src="
-          brand.image !== '-' ? brand.image : require('../../assets/image.png')
-        "
+        :lazy-src="image"
+        :src="brand.image"
         :style="{
           marginBottom: '20px',
         }"
@@ -21,7 +19,7 @@
       <v-card-title> {{ brand.name }}</v-card-title>
 
       <v-card-actions>
-        <v-btn class="open" color="orange lighten-2" text @click="open()">
+        <v-btn class="open" color="orange lighten-2" text @click="open">
           МОДЕЛИ
         </v-btn>
 
@@ -46,8 +44,13 @@
 </template>
 
 <script>
+import image from "@/assets/image.png";
+import { useFiltersStore } from "@/store/filters";
+
 export default {
   name: "brand-card",
+
+  setup: () => ({ filtersStore: useFiltersStore() }),
 
   props: {
     brand: {
@@ -58,6 +61,7 @@ export default {
 
   data: () => ({
     show: false,
+    image: image,
   }),
 
   computed: {
@@ -71,12 +75,11 @@ export default {
   methods: {
     open() {
       const query = {
-        brandName: this.$props.brand.name,
         brandId: this.$props.brand.id,
       };
 
       this.$router.push({ path: "/", query });
-      this.$store.dispatch("filters/loadCars", query);
+      this.filtersStore.loadCars(this.$props.brand.id);
     },
 
     swapDescription() {

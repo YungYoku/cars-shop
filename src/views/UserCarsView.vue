@@ -1,10 +1,10 @@
 <template>
   <div class="userCars">
-    <span v-if="!myCars.length">Пусто</span>
+    <span v-if="!savedStore.cars.length">Пусто</span>
 
     <div v-else class="wrap">
       <v-card
-        v-for="(car, i) in myCars"
+        v-for="(car, i) in savedStore.cars"
         :key="car.id + i"
         :style="{ marginBottom: '20px' }"
         class="mx-auto"
@@ -71,20 +71,24 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { useUserStore } from "@/store/user";
+import { useSavedStore } from "@/store/myCars";
+import { useFavoriteStore } from "@/store/favorite";
 
 export default {
   name: "user-cars-view",
+
+  setup: () => ({
+    userStore: useUserStore(),
+    savedStore: useSavedStore(),
+    favoriteStore: useFavoriteStore(),
+  }),
 
   data() {
     return {
       alert: false,
       carId: "",
     };
-  },
-
-  computed: {
-    ...mapGetters({ id: "id", myCars: "myCars/cars" }),
   },
 
   watch: {
@@ -94,30 +98,33 @@ export default {
   },
 
   created() {
-    this.$store.dispatch("myCars/load", this.id);
+    this.savedStore.load(this.userStore.uid);
   },
 
   methods: {
     isItMyFavorite(id) {
-      const favorite = this.$store.getters["favorite/favorite"];
+      const favorite = this.favoriteStore.favorite;
       return favorite.find((car) => car.id === id);
     },
 
     removeCar() {
-      this.$store.dispatch("myCars/remove", {
-        user_id: this.id,
+      this.savedStore.remove({
+        user_id: this.userStore.uid,
         generation_id: this.carId,
       });
       this.hidePopup();
     },
 
     addFavorite(generation_id) {
-      this.$store.dispatch("favorite/add", { user_id: this.id, generation_id });
+      this.favoriteStore.add({
+        user_id: this.userStore.uid,
+        generation_id,
+      });
     },
 
     removeFavorite(generation_id) {
-      this.$store.dispatch("favorite/remove", {
-        user_id: this.id,
+      this.favoriteStore.remove({
+        user_id: this.userStore.uid,
         generation_id,
       });
     },

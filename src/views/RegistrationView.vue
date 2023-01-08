@@ -51,11 +51,12 @@ import { minLength, required } from "@vuelidate/validators";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/main";
+import { useUserStore } from "@/store/user";
 
 export default {
   name: "registration-view",
 
-  setup: () => ({ v$: useVuelidate() }),
+  setup: () => ({ v$: useVuelidate(), userStore: useUserStore() }),
 
   data: () => ({
     name: "",
@@ -95,12 +96,22 @@ export default {
     async createEmptyUser(uid, name) {
       await setDoc(doc(db, "users", uid), {
         name,
+        status: "user",
+        favorite: [],
+        saved: [],
+        regDate: new Date(),
+      });
+
+      this.userStore.updateUser({
+        name,
+        status: "user",
+        favorite: [],
+        saved: [],
+        regDate: new Date(),
       });
     },
 
     async submit() {
-      this.$store.commit("resetAuthErrors");
-
       const isFormCorrect = await this.v$.$validate();
       if (isFormCorrect) {
         await createUserWithEmailAndPassword(
@@ -110,7 +121,9 @@ export default {
         ).then(async (response) => {
           const uid = response.user.uid;
           await this.createEmptyUser(uid, this.name);
-          this.$store.commit("setUid", uid);
+
+          this.userStore.updateUid(uid);
+
           await this.$router.push("/");
         });
       }

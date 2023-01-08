@@ -37,15 +37,17 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import { minLength, required } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useUserStore } from "@/store/user";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/main";
 
 export default {
   name: "login-view",
 
-  setup: () => ({ v$: useVuelidate() }),
+  setup: () => ({ v$: useVuelidate(), userStore: useUserStore() }),
 
   validations: {
     email: { required },
@@ -71,20 +73,21 @@ export default {
     passwordErrors: "",
   }),
 
-  computed: {
-    ...mapGetters({ wrongPassword: "wrongPassword" }),
-  },
-
   methods: {
     async submit() {
-      this.$store.commit("resetAuthErrors");
-
       const isFormCorrect = await this.v$.$validate();
       if (isFormCorrect) {
         signInWithEmailAndPassword(getAuth(), this.email, this.password).then(
           async (response) => {
             const uid = response.user.uid;
-            this.$store.commit("setUid", uid);
+
+            this.userStore.updateUid(uid);
+
+            const docSnap = await getDoc(doc(db, "users", uid));
+            if (docSnap.exists()) {
+              this.userStore.updateUser(docSnap.data());
+            }
+
             await this.$router.push("/");
           }
         );

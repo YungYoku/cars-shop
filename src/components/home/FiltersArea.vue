@@ -5,9 +5,9 @@
       <v-autocomplete
         v-model="model"
         :clearable="true"
-        :item-title="carNamesList.title"
-        :item-value="carNamesList.value"
-        :items="carNamesList"
+        :item-title="filtersStore.carNamesList.title"
+        :item-value="filtersStore.carNamesList.value"
+        :items="filtersStore.carNamesList"
         label="Модель"
         @keyup="loadCarNamesList($event.target.value)"
         @click:clear="loadCarNamesList('')"
@@ -114,7 +114,6 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import {
   checkIsFiltersEmpty,
   checkIsFiltersEmptyExceptBrand,
@@ -125,9 +124,14 @@ import {
   transmissions as dbTransmissions,
   volumes as dbVolumes,
 } from "@/js/filtersData.js";
+import { useFiltersStore } from "@/store/filters";
 
 export default {
   name: "filters-area",
+
+  setup: () => ({
+    filtersStore: useFiltersStore(),
+  }),
 
   data() {
     return {
@@ -169,8 +173,6 @@ export default {
   },
 
   computed: {
-    ...mapGetters({ carNamesList: "filters/carNamesList" }),
-
     brandRoute() {
       const currentRoute = this.$route.query;
       let querys = { value: "", text: "" };
@@ -207,7 +209,7 @@ export default {
       handler() {
         if (this.isFiltersEmpty) {
           this.search();
-          this.$store.dispatch("filters/loadBrands", this.filters.brand.text);
+          this.filtersStore.loadBrands(this.filters.brand.text);
         }
       },
       deep: true,
@@ -222,14 +224,14 @@ export default {
     const brandName = this.$route.query.brandName;
     const brandId = this.$route.query.brandId;
 
-    // if (brandName && brandId) {
-    //   this.$store.dispatch("filters/loadCars", {
-    //     brandName,
-    //     brandId,
-    //   });
-    // } else {
-    //   this.resetFilters();
-    // }
+    if (brandName && brandId) {
+      this.filtersStore.loadCars({
+        brandName,
+        brandId,
+      });
+    } else {
+      this.resetFilters();
+    }
   },
 
   methods: {
@@ -238,16 +240,16 @@ export default {
         this.startSendTimer();
 
         if (this.isFiltersEmpty) {
-          this.$store.commit("filters/setFiltered", false);
-          this.$store.commit("filters/setCars", []);
+          this.filtersStore.setFiltered(false);
+          this.filtersStore.setCars([]);
         } else if (this.isFiltersEmptyExceptBrand) {
-          this.$store.commit("filters/setFiltered", false);
-          this.$store.dispatch("filters/loadBrands", this.filters.brand.text);
+          this.filtersStore.setFiltered(false);
+          this.filtersStore.loadBrands(this.filters.brand.text);
         } else if (!this.isFiltersEmpty) {
           this.filters.brand.value = "";
           this.filters.brand.text = "";
 
-          this.$store.dispatch("filters/filterCars", this.filters);
+          this.filtersStore.filterCars(this.filters);
         }
       }
     },
@@ -255,7 +257,7 @@ export default {
     loadCarNamesList(name) {
       if (this.sendOpportunity) {
         this.startSendTimer();
-        this.$store.dispatch("filters/loadCarNamesList", { name });
+        this.filtersStore.loadCarNamesList({ name });
       }
     },
 
@@ -298,7 +300,7 @@ export default {
         value: 1,
       };
 
-      this.$store.commit("filters/setFiltered", false);
+      this.filtersStore.setFiltered(false);
     },
 
     reset() {
@@ -312,7 +314,7 @@ export default {
         this.$router.push("/");
       }
       this.resetFilters();
-      this.$store.dispatch("filters/loadBrands", this.filters.brand.text);
+      this.filtersStore.loadBrands(this.filters.brand.text);
     },
   },
 };

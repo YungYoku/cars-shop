@@ -1,10 +1,10 @@
 <template>
   <div class="favourite">
-    <span v-if="!favorite.length">Пусто</span>
+    <span v-if="!favoriteStore.favorite.length">Пусто</span>
 
     <div v-else class="wrap">
       <v-card
-        v-for="(car, i) in favorite"
+        v-for="(car, i) in favoriteStore.favorite"
         :key="car.id + i"
         :style="{ marginBottom: '20px' }"
         class="mx-auto"
@@ -44,42 +44,48 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { useUserStore } from "@/store/user";
+import { useSavedStore } from "@/store/myCars";
+import { useFavoriteStore } from "@/store/favorite";
 
 export default {
   name: "favorite-view",
 
-  computed: {
-    ...mapGetters({ id: "id", favorite: "favorite/favorite" }),
-  },
+  setup: () => ({
+    userStore: useUserStore(),
+    savedStore: useSavedStore(),
+    favoriteStore: useFavoriteStore(),
+  }),
 
   created() {
-    this.$store.dispatch("favorite/load", this.id);
+    this.load();
   },
 
   methods: {
+    load() {},
+
     isItMyCar(id) {
-      const myCars = this.$store.getters["myCars/cars"];
+      const myCars = this.savedStore.cars;
       return myCars.find((car) => car.id === id);
     },
 
     addCar(generation_id) {
-      this.$store.dispatch("myCars/add", {
-        user_id: this.id,
+      this.savedStore.add({
+        user_id: this.userStore.uid,
         generation_id,
       });
     },
 
     removeCar(generation_id) {
-      this.$store.dispatch("myCars/remove", {
-        user_id: this.id,
+      this.savedStore.remove({
+        user_id: this.userStore.uid,
         generation_id,
       });
     },
 
     removeFavorite(generation_id) {
-      this.$store.dispatch("favorite/remove", {
-        user_id: this.id,
+      this.favoriteStore.remove({
+        user_id: this.userStore.uid,
         generation_id,
       });
     },

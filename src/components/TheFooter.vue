@@ -7,8 +7,8 @@
 
           <v-spacer />
 
-          <v-btn v-for="icon in icons" :key="icon" class="mx-4" dark icon>
-            <v-icon :icon="icon" size="24px" />
+          <v-btn v-for="icon in icons" :key="icon" class="mx-2" dark icon>
+            <v-icon :icon="icon" />
           </v-btn>
         </v-card-title>
 

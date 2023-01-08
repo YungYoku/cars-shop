@@ -8,7 +8,8 @@
             {{ link.title }}
           </router-link>
         </v-list-item>
-        <v-list-item v-if="logged">
+
+        <v-list-item v-if="userStore.isLoggedIn">
           <button @click="logout">ВЫЙТИ</button>
         </v-list-item>
       </v-list>
@@ -30,18 +31,20 @@
           <img v-if="link.img" :src="link.img" alt="Картинка" />
           {{ link.title }}
         </router-link>
-        <button v-if="logged" @click="logout">ВЫЙТИ</button>
+        <button v-if="userStore.isLoggedIn" @click="logout">ВЫЙТИ</button>
       </v-toolbar-items>
     </v-app-bar>
   </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
 import { linksLogged, linksUnlogged } from "@/js/headerData.js";
+import { useUserStore } from "@/store/user";
 
 export default {
   name: "the-header",
+
+  setup: () => ({ userStore: useUserStore() }),
 
   data() {
     return {
@@ -51,14 +54,12 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["logged"]),
-
     routeName() {
       return this.$route.meta.title;
     },
 
     links() {
-      return this.logged ? linksLogged : linksUnlogged;
+      return this.userStore.isLoggedIn ? linksLogged : linksUnlogged;
     },
   },
 
@@ -69,7 +70,10 @@ export default {
   },
 
   methods: {
-    ...mapActions(["logout"]),
+    logout() {
+      this.userStore.$reset();
+      localStorage.clear();
+    },
   },
 };
 </script>

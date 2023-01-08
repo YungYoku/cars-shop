@@ -1,18 +1,13 @@
 <template>
   <div class="car">
     <v-card class="mx-auto" max-width="260px">
-      <v-img
-        :lazy-src="require('../../assets/image.png')"
-        :src="car.image !== '-' ? car.image : require('../../assets/image.png')"
-        contain
-        height="200px"
-      />
+      <v-img :lazy-src="image" :src="car.image" contain height="200px" />
 
       <v-card-title> {{ car.model }}</v-card-title>
       <v-card-subtitle> {{ car.generation }}</v-card-subtitle>
 
       <v-card-actions>
-        <v-btn class="open" color="orange lighten-2" text @click="loadCar()">
+        <v-btn class="open" color="orange lighten-2" text @click="loadCar">
           Подробнее
         </v-btn>
 
@@ -51,6 +46,8 @@
 </template>
 
 <script>
+import image from "@/assets/image.png";
+
 export default {
   name: "car-card",
 
@@ -63,11 +60,16 @@ export default {
 
   data: () => ({
     show: false,
+    image: image,
   }),
 
   methods: {
     loadCar() {
-      const query = { id: this.$props.car.id };
+      const brandId = this.$route.query.brandId;
+      const query = {
+        brandId,
+        modelId: this.$props.car.id,
+      };
       this.$router.push({ path: "/car", query });
     },
 

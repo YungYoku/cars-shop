@@ -29,5 +29,9 @@ export default {
   display: flex;
   justify-content: space-between;
   flex-direction: column;
+
+  .main {
+    height: 100%;
+  }
 }
 </style>

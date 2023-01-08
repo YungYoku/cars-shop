@@ -1,13 +1,13 @@
-import { getData, postData } from "@/js/api.js";
+import { defineStore } from "pinia";
 
-export default {
-  namespaced: true,
-
-  state: {
+export const useSavedStore = defineStore("saved", {
+  state: () => ({
     cars: [],
-  },
+  }),
 
-  mutations: {
+  getters: {},
+
+  actions: {
     set(state, cars) {
       state.cars = cars;
     },
@@ -15,37 +15,26 @@ export default {
     reset(state) {
       state.cars = [];
     },
-  },
 
-  getters: {
-    cars: (state) => state.cars,
-  },
+    async load(user_id) {},
 
-  actions: {
-    async load({ commit }, user_id) {
-      await getData("manager/get-list-ownership-car", {
-        user_id,
-      }).then(({ cars }) => {
-        commit("set", cars);
-      });
+    async add({ user_id, generation_id }) {
+      // await postData("manager/add-ownership", {
+      //   user_id,
+      //   generation_id,
+      // });
+
+      await this.load(user_id);
     },
 
-    async add({ dispatch }, { user_id, generation_id }) {
-      await postData("manager/add-ownership", {
-        user_id,
-        generation_id,
-      });
-      await dispatch("load", user_id);
-    },
+    async remove({ user_id, generation_id }) {
+      // await postData("manager/remove-ownership", {
+      //   user_id,
+      //   generation_id,
+      // });
 
-    async remove({ commit, state }, { user_id, generation_id }) {
-      await postData("manager/remove-ownership", {
-        user_id,
-        generation_id,
-      });
-
-      const _cars = state.cars.filter((car) => car.id !== generation_id);
-      commit("set", _cars);
+      const _cars = this.cars.filter((car) => car.id !== generation_id);
+      this.set(_cars);
     },
   },
-};
+});

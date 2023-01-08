@@ -24,11 +24,14 @@
 
 <script>
 import BrandsAreaCard from "@/components/home/BrandsAreaCard.vue";
+import { useFiltersStore } from "@/store/filters";
 
 export default {
   name: "brands-area",
 
   components: { BrandsAreaCard },
+
+  setup: () => ({ filtersStore: useFiltersStore() }),
 
   data() {
     return {
@@ -41,9 +44,9 @@ export default {
     pages() {
       const _pages = [];
       let _page = [];
-      const _brands = this.$store.getters["filters/brands"];
+      let brands = this.filtersStore.brands;
 
-      _brands.forEach((brand) => {
+      brands.forEach((brand) => {
         if (_page.length < 9) {
           _page.push(brand);
         } else {
@@ -51,7 +54,7 @@ export default {
           _page = [];
         }
       });
-      if (_brands.length < 9 && !_pages.length && _page.length) {
+      if (brands.length < 9 && !_pages.length && _page.length) {
         _pages.push(_page);
         _page = [];
       }

@@ -4,10 +4,8 @@
 
     <v-card v-else class="mx-auto" height="100%" width="100%">
       <v-img
-        :lazy-src="require('../assets/image.png')"
-        :src="
-          pickedCar.image ? pickedCar.image : require('../assets/image.png')
-        "
+        :lazy-src="image"
+        :src="car.image"
         class="white--text align-end"
         height="400px"
       >
@@ -31,21 +29,17 @@
 
       <v-card-subtitle class="pb-0" />
 
-      <v-card-text class="text--primary">
-        <v-img
-          :src="
-            car.brand.image !== '-'
-              ? car.brand.image
-              : require('../assets/image.png')
-          "
-          class="white--text align-end"
-          height="64px"
-          width="64px"
-        />
-        <div>Производитель: {{ car.brand.name }}</div>
+      <!--      <v-card-text class="text&#45;&#45;primary">-->
+      <!--        <v-img-->
+      <!--          :src="car.brand.image || image"-->
+      <!--          class="white&#45;&#45;text align-end"-->
+      <!--          height="64px"-->
+      <!--          width="64px"-->
+      <!--        />-->
+      <!--        <div>Производитель: {{ car.brand.name }}</div>-->
 
-        <div>Страна: {{ car.brand.country }}</div>
-      </v-card-text>
+      <!--        <div>Страна: {{ car.brand.country }}</div>-->
+      <!--      </v-card-text>-->
 
       <div class="generationsWrap">
         <generation-info
@@ -56,7 +50,7 @@
       </div>
 
       <v-carousel
-        v-if="car.others.length"
+        v-if="false && car.others.length"
         v-model="model"
         :height="400"
         :hide-delimiters="true"
@@ -73,102 +67,109 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import CarsAreaCard from "@/components/home/CarsAreaCard.vue";
 import GenerationInfo from "@/components/userCars/GenerationInfo.vue";
-import { getData } from "@/js/api.js";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/main";
+import image from "@/assets/image.png";
+import { useSavedStore } from "@/store/myCars";
+import { useFavoriteStore } from "@/store/favorite";
+import { useUserStore } from "@/store/user";
 
 export default {
   name: "car-view",
 
   components: { CarsAreaCard, GenerationInfo },
 
+  setup: () => ({
+    userStore: useUserStore(),
+    savedStore: useSavedStore(),
+    favoriteStore: useFavoriteStore(),
+  }),
+
   data() {
     return {
       model: 0,
       car: {},
+      image: image,
     };
   },
 
   computed: {
-    ...mapGetters({ id: "id" }),
-
     showing() {
-      return (
-        this.car &&
-        this.car.generations &&
-        this.car.generations[0] &&
-        this.pickedCar
-      );
-    },
-
-    pickedCar() {
-      const carGenerations = this.car.generations;
-      return carGenerations.find((el) => el.id === this.currentRouteQueryId);
+      return this.car;
     },
 
     isItMyCar() {
-      const myCars = this.$store.getters["myCars/cars"];
-      return myCars.find((car) => car.id === this.pickedCar.id);
+      const myCars = this.savedStore.cars;
+      return myCars.find((car) => car.id === this.car.id);
     },
 
     isItMyFavorite() {
-      const favorite = this.$store.getters["favorite/favorite"];
-      return favorite.find((car) => car.id === this.pickedCar.id);
+      const favorite = this.favoriteStore.favorite;
+      return favorite.find((car) => car.id === this.car.id);
     },
 
-    currentRouteQueryId() {
-      return this.$route.query.id;
+    routeModelId() {
+      return this.$route.query.modelId;
+    },
+
+    routeBrandId() {
+      return this.$route.query.brandId;
     },
   },
 
   watch: {
     currentRouteQueryId() {
-      this.load(this.currentRouteQueryId);
+      this.load(this.routeBrandId, this.routeModelId);
     },
   },
 
   created() {
-    this.$store.dispatch("favorite/load", this.id).then(() => {
-      this.$store.dispatch("myCars/load", this.id).then(() => {
-        this.load(this.currentRouteQueryId);
+    this.favoriteStore.load(this.userStore.uid).then(() => {
+      this.savedStore.load(this.userStore.uid).then(() => {
+        this.load(this.routeBrandId, this.routeModelId);
       });
     });
   },
 
   methods: {
     addCar() {
-      this.$store.dispatch("myCars/add", {
+      this.savedStore.add({
         user_id: this.id,
         generation_id: this.pickedCar.id,
       });
     },
 
     removeCar() {
-      this.$store.dispatch("myCars/remove", {
+      this.savedStore.remove({
         user_id: this.id,
         generation_id: this.pickedCar.id,
       });
     },
 
     addFavorite() {
-      this.$store.dispatch("favorite/add", {
+      this.favoriteStore.add({
         user_id: this.id,
         generation_id: this.pickedCar.id,
       });
     },
 
     removeFavorite() {
-      this.$store.dispatch("favorite/remove", {
+      this.favoriteStore.remove({
         user_id: this.id,
         generation_id: this.pickedCar.id,
       });
     },
 
-    load(id) {
-      getData(`car/about-model?model=${id}`, {}, true).then((car) => {
-        this.car = car;
-      });
+    async load(brandId, modelId) {
+      const docRef = doc(db, "cars", "models");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const brands = docSnap.data();
+        const models = brands[brandId];
+        this.car = models.find((item) => item.id === modelId);
+      }
     },
   },
 };

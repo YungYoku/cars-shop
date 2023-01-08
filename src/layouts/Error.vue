@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="errorLayout">
     <the-header />
 
     <div class="main">
@@ -19,12 +19,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.main {
+.errorLayout {
   height: 100vh;
   max-height: 100vh;
 
   display: flex;
   justify-content: space-between;
   flex-direction: column;
+
+  .main {
+    height: 100%;
+
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+  }
 }
 </style>

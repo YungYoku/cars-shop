@@ -1,9 +1,9 @@
-import { getData } from "@/js/api.js";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/main";
+import { defineStore } from "pinia";
 
-export default {
-  namespaced: true,
-
-  state: {
+export const useFiltersStore = defineStore("filters", {
+  state: () => ({
     brands: [],
 
     cars: [],
@@ -12,93 +12,93 @@ export default {
     carNamesList: [],
 
     filtered: false,
-  },
+  }),
 
-  mutations: {
-    setBrands(state, brands) {
-      state.brands = brands;
+  getters: {},
+
+  actions: {
+    setBrands(brands) {
+      this.brands = brands;
     },
 
-    setCars(state, cars) {
-      state.cars = cars;
+    setCars(cars) {
+      this.cars = cars;
     },
 
-    setCarPages(state, pagesAmount) {
-      state.carPages = pagesAmount;
+    setCarPages(pagesAmount) {
+      this.carPages = pagesAmount;
     },
 
-    setCarNamesList(state, list) {
+    setCarNamesList(list) {
       if (list.length) {
         list = list.map((el) => ({
           text: el.model,
           value: el.id,
         }));
       }
-      state.carNamesList = list;
+      this.carNamesList = list;
     },
 
-    resetCars(state) {
-      state.cars = [];
+    resetCars() {
+      this.cars = [];
     },
 
-    setFiltered(state, condition) {
-      state.filtered = condition;
+    setFiltered(condition) {
+      this.filtered = condition;
     },
 
-    reset(state) {
-      state.brands = [];
-      state.cars = [];
-      state.myCars = [];
+    reset() {
+      this.brands = [];
+      this.cars = [];
+      this.myCars = [];
     },
-  },
 
-  getters: {
-    brands: (state) => state.brands,
+    async loadBrands(brand = "") {
+      if (this.brands.length) {
+        this.resetCars();
 
-    cars: (state) => state.cars,
+        this.setBrands(
+          this.brands.filter((item) => item.name.startsWith(brand))
+        );
 
-    carPages: (state) => state.carPages,
-
-    carNamesList: (state) => state.carNamesList,
-
-    filtered: (state) => state.filtered,
-  },
-
-  actions: {
-    loadBrands({ commit }, brand) {
-      let url = "car/brand-list";
-      if (brand) {
-        url += "?char=" + brand[0].toLowerCase();
+        return;
       }
 
-      getData(url, {}, true).then(({ brands }) => {
-        commit("setBrands", brands);
-        commit("resetCars");
-      });
+      const docRef = doc(db, "cars", "brands");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const brands = docSnap.data().brands;
+        this.resetCars();
+
+        this.setBrands(brands.filter((item) => item.name.startsWith(brand)));
+      }
     },
 
-    loadCars({ commit }, { brandId }) {
-      getData(`car/model-list?brand=${brandId}`, {}, true).then(
-        ({ models }) => {
-          commit("setCars", models);
-          commit("setCarPages", -1);
-          commit("setFiltered", true);
-        }
-      );
+    async loadCars(brandId) {
+      const docRef = doc(db, "cars", "models");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const brandModels = docSnap.data();
+        const models = brandModels[brandId];
+
+        this.setCars(models);
+        this.setCarPages(-1);
+        this.setFiltered(true);
+      }
     },
 
-    loadCarNamesList({ commit }, { name }) {
+    loadCarNamesList({ name }) {
       if (name !== "") {
         getData(`car/get-model-id?name=${name}`).then(({ ids: list }) => {
           list = list || [];
-          commit("setCarNamesList", list);
+          this.setCarNamesList(list);
         });
       } else {
-        commit("setCarNamesList", []);
+        this.setCarNamesList([]);
       }
     },
 
-    filterCars({ commit }, filters) {
+    filterCars(filters) {
       let url = "car/model-list-filter?";
       const keys = Object.keys(filters);
       const brandName = filters.brand.text.toLowerCase();
@@ -116,10 +116,10 @@ export default {
             el.brand.toLowerCase().includes(brandName)
           );
         }
-        commit("setCarPages", pagination.total_pages);
-        commit("setCars", models);
-        commit("setFiltered", true);
+        this.setCarPages(pagination.total_pages);
+        this.setCars(models);
+        this.setFiltered(true);
       });
     },
   },
-};
+});

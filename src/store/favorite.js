@@ -1,13 +1,13 @@
-import { getData, postData } from "@/js/api.js";
+import { defineStore } from "pinia";
 
-export default {
-  namespaced: true,
-
-  state: {
+export const useFavoriteStore = defineStore("favorite", {
+  state: () => ({
     favorite: [],
-  },
+  }),
 
-  mutations: {
+  getters: {},
+
+  actions: {
     set(state, favorite) {
       state.favorite = favorite;
     },
@@ -15,39 +15,25 @@ export default {
     reset(state) {
       state.favorite = [];
     },
-  },
 
-  getters: {
-    favorite: (state) => state.favorite,
-  },
+    async load(user_id) {},
 
-  actions: {
-    load({ commit }, user_id) {
-      getData("manager/get-list-favorite-car", {
-        user_id,
-      }).then(({ cars }) => {
-        commit("set", cars);
-      });
+    async add({ user_id, generation_id }) {
+      // await postData("manager/add-favorite", {
+      //   user_id,
+      //   generation_id,
+      // });
+      await this.load(user_id);
     },
 
-    async add({ dispatch }, { user_id, generation_id }) {
-      await postData("manager/add-favorite", {
-        user_id,
-        generation_id,
-      });
-      await dispatch("load", user_id);
-    },
+    async remove({ user_id, generation_id }) {
+      // await postData("manager/remove-favorite", {
+      //   user_id,
+      //   generation_id,
+      // });
 
-    async remove({ commit, state }, { user_id, generation_id }) {
-      await postData("manager/remove-favorite", {
-        user_id,
-        generation_id,
-      });
-
-      const _favorite = state.favorite.filter(
-        (car) => car.id !== generation_id
-      );
-      commit("set", _favorite);
+      const _favorite = this.favorite.filter((car) => car.id !== generation_id);
+      this.set(_favorite);
     },
   },
-};
+});

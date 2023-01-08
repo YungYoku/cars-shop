@@ -1,29 +1,37 @@
 <template>
   <v-app>
     <component :is="layout">
-      <the-loading v-if="loading" />
+      <the-loading v-if="loadingStore.loading" />
       <router-view />
     </component>
   </v-app>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import DefaultLayout from "@/layouts/Default.vue";
 import ErrorLayout from "@/layouts/Error.vue";
 import TheLoading from "@/components/TheLoading.vue";
+import { useLoadingStore } from "@/store/loading";
+import { useFiltersStore } from "@/store/filters";
 
 export default {
   name: "app",
 
   components: { default: DefaultLayout, error: ErrorLayout, TheLoading },
 
-  computed: {
-    ...mapGetters(["loading"]),
+  setup: () => ({
+    loadingStore: useLoadingStore(),
+    filtersStore: useFiltersStore(),
+  }),
 
+  computed: {
     layout() {
       return this.$route.meta.layout || "default";
     },
+  },
+
+  mounted() {
+    this.filtersStore.loadBrands();
   },
 };
 </script>

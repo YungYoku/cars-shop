@@ -1,31 +1,19 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
-import store from "./store";
 import "./assets/scss/main.scss";
-import "vuetify/styles";
-import { createVuetify } from "vuetify";
-import * as components from "vuetify/components";
-import * as directives from "vuetify/directives";
-import { aliases, mdi } from "vuetify/iconsets/mdi";
+import vuetify from "@/plugins/vuetify";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { createPinia } from "pinia";
 
 const app = createApp(App);
-app.use(router);
-app.use(store);
 
-const vuetify = createVuetify({
-  components,
-  directives,
-  icons: {
-    defaultSet: "mdi",
-    aliases,
-    sets: {
-      mdi,
-    },
-  },
-});
+const pinia = createPinia();
+app.use(pinia);
+
+app.use(router);
+
 app.use(vuetify);
 
 const firebaseConfig = {
