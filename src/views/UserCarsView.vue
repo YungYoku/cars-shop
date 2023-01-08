@@ -29,7 +29,7 @@
 
         <v-card-actions>
           <v-btn icon text @click="showPopup(car)">
-            <v-icon size="24px">mdi-minus</v-icon>
+            <v-icon icon="mdi-minus" size="24px" />
           </v-btn>
 
           <v-btn
@@ -38,11 +38,11 @@
             text
             @click="addFavorite(car)"
           >
-            <v-icon size="24px">mdi-bookmark</v-icon>
+            <v-icon icon="mdi-bookmark" size="24px" />
           </v-btn>
 
           <v-btn v-else icon text @click="removeFavorite(car)">
-            <v-icon size="24px">mdi-delete</v-icon>
+            <v-icon icon="mdi-delete" size="24px" />
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -51,7 +51,6 @@
     <div class="alertBottom">
       <v-alert
         :value="alert"
-        border="left"
         bottom="20px"
         color="error accent-4"
         colored-border

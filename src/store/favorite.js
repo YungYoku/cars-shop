@@ -65,10 +65,6 @@ export const useFavoriteStore = defineStore("favorite", {
           modelId,
         }),
       });
-
-      this.favorite = this.favorite.filter((car) => car.id !== modelId);
-
-      await userStore.loadUser();
     },
   },
 });

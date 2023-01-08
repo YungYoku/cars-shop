@@ -4,8 +4,8 @@
 
     <div v-else class="wrap">
       <v-card
-        v-for="(car, i) in favoriteStore.favorite"
-        :key="car.id + i"
+        v-for="car in favoriteStore.favorite"
+        :key="car.brandId + '' + car.modelId"
         :style="{ marginBottom: '20px' }"
         class="mx-auto"
         min-width="240"
@@ -28,14 +28,14 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-btn v-if="!isItMyCar(car)" icon text @click="addCar(car)">
-            <v-icon size="24px">mdi-plus</v-icon>
+          <v-btn v-if="isItMyCar(car)" icon text @click="removeCar(car)">
+            <v-icon icon="mdi-minus" size="24px" />
           </v-btn>
-          <v-btn v-else icon text @click="removeCar(car)">
-            <v-icon size="24px">mdi-minus</v-icon>
+          <v-btn v-else icon text @click="addCar(car)">
+            <v-icon icon="mdi-plus" size="24px" />
           </v-btn>
           <v-btn icon text @click="removeFavorite(car)">
-            <v-icon size="24px">mdi-delete</v-icon>
+            <v-icon icon="mdi-delete" size="24px" />
           </v-btn>
         </v-card-actions>
       </v-card>

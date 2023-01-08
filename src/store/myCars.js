@@ -65,10 +65,6 @@ export const useSavedStore = defineStore("saved", {
           modelId,
         }),
       });
-
-      this.cars = this.cars.filter((car) => car.modelId !== modelId);
-
-      await userStore.loadUser();
     },
   },
 });
