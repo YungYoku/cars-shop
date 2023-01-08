@@ -101,8 +101,11 @@ export default {
     },
 
     isItMyCar() {
-      const myCars = this.savedStore.cars;
-      return myCars.find((car) => car.id === this.car.id);
+      return this.userStore.user.saved.find(
+        (item) =>
+          item.brandId === this.routeBrandId &&
+          item.modelId === this.routeModelId
+      );
     },
 
     isItMyFavorite() {
@@ -135,24 +138,23 @@ export default {
 
   methods: {
     addCar() {
-      this.savedStore.add(this.routeBrandId, this.pickedCar.id);
+      this.savedStore.add(this.routeBrandId, this.routeModelId);
     },
 
     removeCar() {
-      this.savedStore.remove(this.routeBrandId, this.pickedCar.id);
+      this.savedStore.remove(this.routeBrandId, this.routeModelId);
     },
 
     addFavorite() {
-      this.favoriteStore.add(this.routeBrandId, this.pickedCar.id);
+      this.favoriteStore.add(this.routeBrandId, this.routeModelId);
     },
 
     removeFavorite() {
-      this.favoriteStore.remove(this.routeBrandId, this.pickedCar.id);
+      this.favoriteStore.remove(this.routeBrandId, this.routeModelId);
     },
 
     async load(brandId, modelId) {
-      const docRef = doc(db, "cars", "models");
-      const docSnap = await getDoc(docRef);
+      const docSnap = await getDoc(doc(db, "cars", "models"));
       if (docSnap.exists()) {
         const brands = docSnap.data();
         const models = brands[brandId];

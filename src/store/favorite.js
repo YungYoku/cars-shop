@@ -1,5 +1,13 @@
 import { defineStore } from "pinia";
 import { useUserStore } from "@/store/user";
+import {
+  arrayRemove,
+  arrayUnion,
+  doc,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { db } from "@/main";
 
 export const useFavoriteStore = defineStore("favorite", {
   state: () => ({
@@ -9,36 +17,58 @@ export const useFavoriteStore = defineStore("favorite", {
   getters: {},
 
   actions: {
-    set(state, favorite) {
-      state.favorite = favorite;
-    },
+    async update() {
+      const userStore = useUserStore();
+      const carIds = userStore.user.favorite;
 
-    reset(state) {
-      state.favorite = [];
-    },
+      const favorite = [];
 
-    async load(uid) {},
+      const docSnap = await getDoc(doc(db, "cars", "models"));
+      if (docSnap.exists()) {
+        const brands = docSnap.data();
+
+        carIds.forEach((item) => {
+          const car = brands[item.brandId][item.modelId];
+          car.brandId = item.brandId;
+          car.modelId = item.modelId;
+
+          favorite.push(car);
+        });
+      }
+
+      this.favorite = favorite;
+    },
 
     async add(brandId, modelId) {
       const userStore = useUserStore();
       const uid = userStore.uid;
-      // await postData("manager/add-favorite", {
-      //   user_id,
-      //   generation_id,
-      // });
-      await this.load(uid);
+
+      const car = {
+        brandId,
+        modelId,
+      };
+
+      await updateDoc(doc(db, "users", uid), {
+        favorite: arrayUnion(car),
+      });
+
+      this.favorite.push(car);
     },
 
     async remove(brandId, modelId) {
       const userStore = useUserStore();
       const uid = userStore.uid;
-      // await postData("manager/remove-favorite", {
-      //   user_id,
-      //   generation_id,
-      // });
 
-      const _favorite = this.favorite.filter((car) => car.id !== modelId);
-      this.set(_favorite);
+      await updateDoc(doc(db, "users", uid), {
+        favorite: arrayRemove({
+          brandId,
+          modelId,
+        }),
+      });
+
+      this.favorite = this.favorite.filter((car) => car.id !== modelId);
+
+      await userStore.loadUser();
     },
   },
 });

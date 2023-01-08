@@ -46,25 +46,24 @@
 <script>
 import { useSavedStore } from "@/store/myCars";
 import { useFavoriteStore } from "@/store/favorite";
+import { useUserStore } from "@/store/user";
 
 export default {
   name: "favorite-view",
 
   setup: () => ({
+    userStore: useUserStore(),
     savedStore: useSavedStore(),
     favoriteStore: useFavoriteStore(),
   }),
 
-  created() {
-    this.load();
-  },
-
   methods: {
-    load() {},
-
-    isItMyCar(id) {
-      const myCars = this.savedStore.cars;
-      return myCars.find((car) => car.id === id);
+    isItMyCar(propsCar) {
+      const saved = this.userStore.user.saved;
+      return !!saved.find(
+        (car) =>
+          car.brandId === propsCar.brandId && car.modelId === propsCar.modelId
+      );
     },
 
     addCar(car) {

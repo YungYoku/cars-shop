@@ -92,20 +92,21 @@ export default {
     };
   },
 
+  computed: {},
+
   watch: {
     cars() {
       this.hidePopup();
     },
   },
 
-  created() {
-    this.savedStore.load(this.userStore.uid);
-  },
-
   methods: {
     isItMyFavorite(propsCar) {
-      const favorite = this.favoriteStore.favorite;
-      return favorite.find((car) => car.id === propsCar.modelId);
+      const favorite = this.userStore.user.favorite;
+      return !!favorite.find(
+        (car) =>
+          car.brandId === propsCar.brandId && car.modelId === propsCar.modelId
+      );
     },
 
     removeCar() {

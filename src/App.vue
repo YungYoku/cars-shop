@@ -13,6 +13,7 @@ import ErrorLayout from "@/layouts/Error.vue";
 import TheLoading from "@/components/TheLoading.vue";
 import { useLoadingStore } from "@/store/loading";
 import { useFiltersStore } from "@/store/filters";
+import { useUserStore } from "@/store/user";
 
 export default {
   name: "app",
@@ -20,6 +21,7 @@ export default {
   components: { default: DefaultLayout, error: ErrorLayout, TheLoading },
 
   setup: () => ({
+    userStore: useUserStore(),
     loadingStore: useLoadingStore(),
     filtersStore: useFiltersStore(),
   }),
@@ -31,6 +33,7 @@ export default {
   },
 
   mounted() {
+    this.userStore.loadUser();
     this.filtersStore.loadBrands();
   },
 };

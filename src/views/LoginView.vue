@@ -41,8 +41,6 @@ import { minLength, required } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useUserStore } from "@/store/user";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/main";
 
 export default {
   name: "login-view",
@@ -83,10 +81,7 @@ export default {
 
             this.userStore.updateUid(uid);
 
-            const docSnap = await getDoc(doc(db, "users", uid));
-            if (docSnap.exists()) {
-              this.userStore.updateUser(docSnap.data());
-            }
+            await this.userStore.loadUser();
 
             await this.$router.push("/");
           }

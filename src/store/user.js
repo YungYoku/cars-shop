@@ -1,4 +1,8 @@
 import { defineStore } from "pinia";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/main";
+import { useSavedStore } from "@/store/myCars";
+import { useFavoriteStore } from "@/store/favorite";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -25,8 +29,17 @@ export const useUserStore = defineStore("user", {
       localStorage.uid = uid;
     },
 
-    updateUser(user) {
-      this.user = user;
+    async loadUser() {
+      const docSnap = await getDoc(doc(db, "users", this.uid));
+      if (docSnap.exists()) {
+        this.user = docSnap.data();
+      }
+
+      const savedStore = useSavedStore();
+      await savedStore.update();
+
+      const favoriteStore = useFavoriteStore();
+      await favoriteStore.update();
     },
 
     logout() {

@@ -101,14 +101,6 @@ export default {
         saved: [],
         regDate: new Date(),
       });
-
-      this.userStore.updateUser({
-        name,
-        status: "user",
-        favorite: [],
-        saved: [],
-        regDate: new Date(),
-      });
     },
 
     async submit() {
@@ -123,6 +115,8 @@ export default {
           await this.createEmptyUser(uid, this.name);
 
           this.userStore.updateUid(uid);
+
+          await this.userStore.loadUser();
 
           await this.$router.push("/");
         });

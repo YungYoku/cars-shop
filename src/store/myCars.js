@@ -1,7 +1,13 @@
 import { defineStore } from "pinia";
 import { useUserStore } from "@/store/user";
 import { db } from "@/main";
-import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import {
+  arrayRemove,
+  arrayUnion,
+  doc,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
 
 export const useSavedStore = defineStore("saved", {
   state: () => ({
@@ -11,25 +17,42 @@ export const useSavedStore = defineStore("saved", {
   getters: {},
 
   actions: {
-    set(state, cars) {
-      state.cars = cars;
-    },
+    async update() {
+      const userStore = useUserStore();
+      const carIds = userStore.user.saved;
 
-    reset(state) {
-      state.cars = [];
-    },
+      const cars = [];
 
-    async load(uid) {},
+      const docSnap = await getDoc(doc(db, "cars", "models"));
+      if (docSnap.exists()) {
+        const brands = docSnap.data();
+
+        carIds.forEach((item) => {
+          const car = brands[item.brandId][item.modelId];
+          car.brandId = item.brandId;
+          car.modelId = item.modelId;
+
+          cars.push(car);
+        });
+      }
+
+      this.cars = cars;
+    },
 
     async add(brandId, modelId) {
       const userStore = useUserStore();
       const uid = userStore.uid;
 
+      const car = {
+        brandId,
+        modelId,
+      };
+
       await updateDoc(doc(db, "users", uid), {
-        saved: arrayUnion({ brandId, modelId }),
+        saved: arrayUnion(car),
       });
 
-      await this.load(uid);
+      this.cars.push(car);
     },
 
     async remove(brandId, modelId) {
@@ -37,11 +60,15 @@ export const useSavedStore = defineStore("saved", {
       const uid = userStore.uid;
 
       await updateDoc(doc(db, "users", uid), {
-        saved: arrayRemove({ brandId, modelId }),
+        saved: arrayRemove({
+          brandId,
+          modelId,
+        }),
       });
 
-      const _cars = this.cars.filter((car) => car.id !== modelId);
-      this.set(_cars);
+      this.cars = this.cars.filter((car) => car.modelId !== modelId);
+
+      await userStore.loadUser();
     },
   },
 });
