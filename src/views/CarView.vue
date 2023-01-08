@@ -109,8 +109,11 @@ export default {
     },
 
     isItMyFavorite() {
-      const favorite = this.favoriteStore.favorite;
-      return favorite.find((car) => car.id === this.car.id);
+      return this.userStore.user.favorite.find(
+        (item) =>
+          item.brandId === this.routeBrandId &&
+          item.modelId === this.routeModelId
+      );
     },
 
     routeModelId() {
