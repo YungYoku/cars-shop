@@ -29,6 +29,24 @@
 
       <v-card-subtitle class="pb-0" />
 
+      <v-card-text v-if="car.generation">
+        Поколение: {{ car.generation }}
+      </v-card-text>
+
+      <v-card-text v-if="car.volume">
+        Объем двигателя: {{ car.volume }}
+      </v-card-text>
+
+      <v-card-text v-if="car.transmission">
+        Тип трансмиссии: {{ car.transmission }}
+      </v-card-text>
+
+      <v-card-text v-if="car.engine">
+        Тип двигателя: {{ car.engine }}
+      </v-card-text>
+
+      <v-card-text v-if="car.body"> Корпус: {{ car.body }}</v-card-text>
+
       <!--      <v-card-text class="text&#45;&#45;primary">-->
       <!--        <v-img-->
       <!--          :src="car.brand.image || image"-->
@@ -41,27 +59,27 @@
       <!--        <div>Страна: {{ car.brand.country }}</div>-->
       <!--      </v-card-text>-->
 
-      <div class="generationsWrap">
-        <generation-info
-          v-for="car in car.generations"
-          :key="car.id"
-          :car="car"
-        />
-      </div>
+      <!--      <div class="generationsWrap">-->
+      <!--        <generation-info-->
+      <!--          v-for="car in car.generations"-->
+      <!--          :key="car.id"-->
+      <!--          :car="car"-->
+      <!--        />-->
+      <!--      </div>-->
 
-      <v-carousel
-        v-if="false && car.others.length"
-        v-model="model"
-        :height="400"
-        :hide-delimiters="true"
-        :show-arrows="car.others.length > 1"
-      >
-        <v-carousel-item v-for="car in car.others" :key="car.id">
-          <v-sheet :style="{ margin: '0 10%' }" height="100%" tile width="80%">
-            <cars-area-card :car="car" />
-          </v-sheet>
-        </v-carousel-item>
-      </v-carousel>
+      <!--      <v-carousel-->
+      <!--        v-if="car.others.length"-->
+      <!--        v-model="model"-->
+      <!--        :height="400"-->
+      <!--        :hide-delimiters="true"-->
+      <!--        :show-arrows="car.others.length > 1"-->
+      <!--      >-->
+      <!--        <v-carousel-item v-for="car in car.others" :key="car.id">-->
+      <!--          <v-sheet :style="{ margin: '0 10%' }" height="100%" tile width="80%">-->
+      <!--            <cars-area-card :car="car" />-->
+      <!--          </v-sheet>-->
+      <!--        </v-carousel-item>-->
+      <!--      </v-carousel>-->
     </v-card>
   </div>
 </template>
