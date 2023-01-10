@@ -77,37 +77,31 @@ export const useFiltersStore = defineStore("filters", {
     },
 
     loadCarNamesList({ name }) {
-      if (name !== "") {
-        getData(`car/get-model-id?name=${name}`).then(({ ids: list }) => {
-          list = list || [];
-          this.setCarNamesList(list);
-        });
-      } else {
-        this.setCarNamesList([]);
-      }
+      // if (name !== "") {
+      //   getData(`car/get-model-id?name=${name}`).then(({ ids: list }) => {
+      //     list = list || [];
+      //     this.setCarNamesList(list);
+      //   });
+      // } else {
+      //   this.setCarNamesList([]);
+      // }
     },
 
     filterCars(filters) {
-      let url = "car/model-list-filter?";
-      const keys = Object.keys(filters);
-      const brandName = filters.brand.text.toLowerCase();
+      const filterKeys = Object.keys(filters);
 
-      keys.forEach((key) =>
-        filters[key].value !== ""
-          ? (url += key + "=" + filters[key].value + "&")
-          : ""
-      );
-      url = url.slice(0, -1);
+      this.cars = this.cars.filter((car) => {
+        let flag = true;
 
-      getData(url, {}, true).then(({ pagination, models }) => {
-        if (brandName !== "") {
-          models = models.filter((el) =>
-            el.brand.toLowerCase().includes(brandName)
-          );
-        }
-        this.setCarPages(pagination.total_pages);
-        this.setCars(models);
-        this.setFiltered(true);
+        filterKeys.forEach((key) => {
+          if (filters[key] !== "" && key !== "brand") {
+            if (car[key] !== filters[key]) {
+              flag = false;
+            }
+          }
+        });
+
+        return flag;
       });
     },
   },

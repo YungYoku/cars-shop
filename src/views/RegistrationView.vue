@@ -146,17 +146,20 @@ export default {
 
   form {
     width: 30%;
-    justify-content: center;
-    align-items: center;
-    padding: 30px 40px 20px 40px;
-    margin: 0 auto;
     min-width: 400px;
-    background-color: #fbfaf7;
-    border-radius: 20px;
+
     display: grid;
     grid-template: 70px 70px 70px 90px 30px / 1fr;
-    box-shadow: 0 10px 20px 6px #dddddd;
+    justify-content: center;
     grid-gap: 15px;
+    align-items: center;
+
+    padding: 30px 30px 20px 30px;
+    margin: 0 auto;
+
+    background-color: #fbfaf7;
+    border-radius: 10px;
+    box-shadow: 0 9px 15px 4px #e8e7e7;
 
     label img {
       width: 20px;

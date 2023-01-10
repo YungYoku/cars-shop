@@ -1,107 +1,100 @@
 <template>
   <aside class="filters">
     <h4>Фильтры</h4>
-    <v-form @submit.prevent="search">
-      <v-autocomplete
-        v-model="model"
-        :clearable="true"
-        :item-title="filtersStore.carNamesList.title"
-        :item-value="filtersStore.carNamesList.value"
-        :items="filtersStore.carNamesList"
-        label="Модель"
-        @keyup="loadCarNamesList($event.target.value)"
-        @click:clear="loadCarNamesList('')"
-      />
 
+    <v-form @submit.prevent="search">
       <v-text-field
-        v-model.trim="filters.brand.text"
-        :disabled="!isFiltersEmptyExceptBrand"
+        v-model.trim="filters.brand"
+        :disabled="isBrandFiltered"
         label="Бренд"
       />
 
-      <div class="filter">
-        <v-select
-          v-model="filters.volume"
-          :item-title="volumes.title"
-          :item-value="volumes.value"
-          :items="volumes"
-          label="Объем двигателя"
-          persistent-hint
-          return-object
+      <template v-if="isBrandFiltered">
+        <v-autocomplete
+          v-model="model"
+          :clearable="true"
+          :items="filtersStore.carNamesList"
+          label="Модель"
+          @keyup="loadCarNamesList($event.target.value)"
+          @click:clear="loadCarNamesList('')"
         />
 
-        <v-btn
-          v-if="filters.volume.value !== ''"
-          icon
-          text
-          @click="resetFilter('volume')"
-        >
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
-      </div>
+        <div class="filter">
+          <v-select
+            v-model="filters.volume"
+            :items="volumes"
+            label="Объем двигателя"
+            persistent-hint
+            return-object
+          />
 
-      <div class="filter">
-        <v-select
-          v-model="filters.transmission"
-          :item-title="transmissions.title"
-          :item-value="transmissions.value"
-          :items="transmissions"
-          label="Трансмиссия"
-          persistent-hint
-          return-object
-        />
+          <v-btn
+            v-if="filters.volume !== ''"
+            icon
+            text
+            @click="resetFilter('volume')"
+          >
+            <v-icon icon="mdi-delete" />
+          </v-btn>
+        </div>
 
-        <v-btn
-          v-if="filters.transmission.value !== ''"
-          icon
-          text
-          @click="resetFilter('transmission')"
-        >
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
-      </div>
+        <div class="filter">
+          <v-select
+            v-model="filters.transmission"
+            :items="transmissions"
+            label="Трансмиссия"
+            persistent-hint
+            return-object
+          />
 
-      <div class="filter">
-        <v-select
-          v-model="filters.engine"
-          :item-title="engines.title"
-          :item-value="engines.value"
-          :items="engines"
-          label="Двигатель"
-          persistent-hint
-          return-object
-        />
+          <v-btn
+            v-if="filters.transmission !== ''"
+            icon
+            text
+            @click="resetFilter('transmission')"
+          >
+            <v-icon icon="mdi-delete" />
+          </v-btn>
+        </div>
 
-        <v-btn
-          v-if="filters.engine.value !== ''"
-          icon
-          text
-          @click="resetFilter('engine')"
-        >
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
-      </div>
+        <div class="filter">
+          <v-select
+            v-model="filters.engine"
+            :items="engines"
+            label="Двигатель"
+            persistent-hint
+            return-object
+          />
 
-      <div class="filter">
-        <v-select
-          v-model="filters.body"
-          :item-title="bodys.title"
-          :item-value="bodys.value"
-          :items="bodys"
-          label="Корпус"
-          persistent-hint
-          return-object
-        />
+          <v-btn
+            v-if="filters.engine !== ''"
+            icon
+            text
+            @click="resetFilter('engine')"
+          >
+            <v-icon icon="mdi-delete" />
+          </v-btn>
+        </div>
 
-        <v-btn
-          v-if="filters.body.value !== ''"
-          icon
-          text
-          @click="resetFilter('body')"
-        >
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
-      </div>
+        <div class="filter">
+          <v-select
+            v-model="filters.body"
+            :items="bodys"
+            label="Корпус"
+            persistent-hint
+            return-object
+          />
+
+          <v-btn
+            v-if="filters.body !== ''"
+            icon
+            text
+            @click="resetFilter('body')"
+          >
+            <v-icon icon="mdi-delete" />
+          </v-btn>
+        </div>
+      </template>
 
       <v-btn :disabled="isFiltersEmpty" elevation="1" type="action">
         Искать
@@ -135,32 +128,13 @@ export default {
 
   data() {
     return {
-      model: 0,
+      model: "",
       filters: {
-        body: {
-          text: "",
-          value: "",
-        },
-        brand: {
-          text: "",
-          value: "",
-        },
-        engine: {
-          text: "",
-          value: "",
-        },
-        transmission: {
-          text: "",
-          value: "",
-        },
-        offset: {
-          text: "",
-          value: 1,
-        },
-        volume: {
-          text: "",
-          value: "",
-        },
+        body: "",
+        brand: "",
+        engine: "",
+        transmission: "",
+        volume: null,
       },
 
       sendOpportunity: true,
@@ -169,21 +143,35 @@ export default {
       engines: dbEngines,
       transmissions: dbTransmissions,
       volumes: dbVolumes,
+
+      modelsShowing: false,
     };
   },
 
   computed: {
+    isBrandFiltered() {
+      return !!(this.filters.brand && this.filtersStore.filtered);
+    },
+
     brandRoute() {
-      const currentRoute = this.$route.query;
-      let querys = { value: "", text: "" };
-      if (currentRoute.brandId && currentRoute.brandName) {
-        querys = {
-          value: currentRoute.brandId,
-          text: currentRoute.brandName,
-        };
+      const brandId = this.$route.query.brandId;
+      const brands = this.filtersStore.brands;
+
+      if (brandId && brands.length) {
+        const brand = brands.find((brand) => brand.id === brandId);
+
+        if (brand) {
+          return {
+            id: brandId,
+            name: brand.name,
+          };
+        }
       }
 
-      return querys;
+      return {
+        id: brandId,
+        name: "",
+      };
     },
 
     isFiltersEmpty() {
@@ -199,7 +187,8 @@ export default {
     brandRoute: {
       immediate: true,
       handler() {
-        this.filters.brand = this.brandRoute;
+        this.filters.brand = this.brandRoute.name;
+        this.filtersStore.loadCars(this.brandRoute.id);
       },
       deep: true,
     },
@@ -209,7 +198,7 @@ export default {
       handler() {
         if (this.isFiltersEmpty) {
           this.search();
-          this.filtersStore.loadBrands(this.filters.brand.text);
+          this.filtersStore.loadBrands(this.filters.brand);
         }
       },
       deep: true,
@@ -244,11 +233,8 @@ export default {
           this.filtersStore.setCars([]);
         } else if (this.isFiltersEmptyExceptBrand) {
           this.filtersStore.setFiltered(false);
-          this.filtersStore.loadBrands(this.filters.brand.text);
+          this.filtersStore.loadBrands(this.filters.brand);
         } else if (!this.isFiltersEmpty) {
-          this.filters.brand.value = "";
-          this.filters.brand.text = "";
-
           this.filtersStore.filterCars(this.filters);
         }
       }
@@ -279,10 +265,7 @@ export default {
     },
 
     resetFilter(filter) {
-      this.filters[filter] = {
-        text: "",
-        value: "",
-      };
+      this.filters[filter] = "";
 
       this.search();
     },
@@ -290,15 +273,8 @@ export default {
     resetFilters() {
       const keys = Object.keys(this.filters);
       keys.forEach((key) => {
-        this.filters[key] = {
-          text: "",
-          value: "",
-        };
+        this.filters[key] = "";
       });
-      this.filters.offset = {
-        text: "",
-        value: 1,
-      };
 
       this.filtersStore.setFiltered(false);
     },
@@ -314,7 +290,7 @@ export default {
         this.$router.push("/");
       }
       this.resetFilters();
-      this.filtersStore.loadBrands(this.filters.brand.text);
+      this.filtersStore.loadBrands(this.filters.brand);
     },
   },
 };
