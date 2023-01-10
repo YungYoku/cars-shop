@@ -15,7 +15,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar app color="#9bb1ff" dark>
+    <v-app-bar app dark>
       <v-app-bar-nav-icon class="hidden-md-and-up" @click="drawer = !drawer" />
       <v-toolbar-title class="hidden-md-and-up">
         {{ routeName }}
@@ -93,11 +93,16 @@ export default {
 .header {
   width: 100%;
   height: 60px;
-  background-color: #9bb1ff;
 
   display: flex;
   align-items: center;
   justify-content: center;
+
+  header {
+    background-color: rgba(102, 135, 253, 0.7);
+
+    backdrop-filter: blur(10px);
+  }
 
   .router-link-active {
     color: white;

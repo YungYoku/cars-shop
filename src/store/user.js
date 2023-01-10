@@ -30,17 +30,19 @@ export const useUserStore = defineStore("user", {
     },
 
     async loadUser() {
-      await onSnapshot(doc(db, "users", this.uid), async (response) => {
-        if (response.exists()) {
-          this.user = response.data();
+      if (this.isLoggedIn) {
+        await onSnapshot(doc(db, "users", this.uid), async (response) => {
+          if (response.exists()) {
+            this.user = response.data();
 
-          const savedStore = useSavedStore();
-          await savedStore.update();
+            const savedStore = useSavedStore();
+            await savedStore.update();
 
-          const favoriteStore = useFavoriteStore();
-          await favoriteStore.update();
-        }
-      });
+            const favoriteStore = useFavoriteStore();
+            await favoriteStore.update();
+          }
+        });
+      }
     },
 
     logout() {

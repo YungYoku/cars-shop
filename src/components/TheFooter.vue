@@ -46,10 +46,16 @@ export default {
   z-index: 3;
 
   .v-footer {
-    background-color: #788bff;
+    background-color: #363b57;
 
     .v-card {
       background: transparent;
+
+      color: #ffffff;
+
+      .v-icon {
+        color: #000000;
+      }
     }
   }
 }
