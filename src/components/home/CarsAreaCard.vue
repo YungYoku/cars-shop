@@ -14,7 +14,8 @@
         <v-spacer />
 
         <v-btn icon @click="swapDescription">
-          <v-icon>{{ show ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
+          <v-icon v-if="show" icon="mdi-chevron-up" />
+          <v-icon v-else icon="mdi-chevron-down" />
         </v-btn>
       </v-card-actions>
 

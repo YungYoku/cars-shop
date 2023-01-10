@@ -14,16 +14,16 @@
 
       <v-card-actions>
         <v-btn v-if="!isItMyCar" icon @click="addCar">
-          <v-icon size="24px">mdi-plus</v-icon>
+          <v-icon icon="mdi-plus" size="24px" />
         </v-btn>
         <v-btn v-else icon @click="removeCar">
-          <v-icon size="24px">mdi-minus</v-icon>
+          <v-icon icon="mdi-minus" size="24px" />
         </v-btn>
         <v-btn v-if="!isItMyFavorite" icon @click="addFavorite">
-          <v-icon size="24px">mdi-bookmark</v-icon>
+          <v-icon icon="mdi-bookmark" size="24px" />
         </v-btn>
         <v-btn v-else icon @click="removeFavorite">
-          <v-icon size="24px">mdi-delete</v-icon>
+          <v-icon icon="mdi-delete" size="24px" />
         </v-btn>
       </v-card-actions>
 
