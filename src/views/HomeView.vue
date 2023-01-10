@@ -1,10 +1,7 @@
 <template>
   <div class="home">
     <filters-area />
-    <brands-area
-      v-if="!filtersStore.cars.length && !filtersStore.filtered"
-      key="brand"
-    />
+    <brands-area v-if="brandsShowing" key="brand" />
     <cars-area v-else key="cars" />
   </div>
 </template>
@@ -21,6 +18,16 @@ export default {
   components: { FiltersArea, CarsArea, BrandsArea },
 
   setup: () => ({ filtersStore: useFiltersStore() }),
+
+  computed: {
+    brandsShowing() {
+      if (this.filtersStore.cars) {
+        return !this.filtersStore.filtered;
+      }
+
+      return true;
+    },
+  },
 };
 </script>
 

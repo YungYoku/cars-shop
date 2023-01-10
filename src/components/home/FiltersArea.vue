@@ -280,15 +280,7 @@ export default {
     },
 
     reset() {
-      const pathQuerys = this.$route.query;
-
-      if (
-        pathQuerys.brandId &&
-        pathQuerys.brandName &&
-        (pathQuerys.brandId !== "" || pathQuerys.brandName !== "")
-      ) {
-        this.$router.push("/");
-      }
+      this.$router.push("/");
       this.resetFilters();
       this.filtersStore.loadBrands(this.filters.brand);
     },
