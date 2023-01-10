@@ -28,12 +28,7 @@
             return-object
           />
 
-          <v-btn
-            v-if="filters.volume !== ''"
-            icon
-            text
-            @click="resetFilter('volume')"
-          >
+          <v-btn v-if="filters.volume" icon text @click="resetFilter('volume')">
             <v-icon icon="mdi-delete" />
           </v-btn>
         </div>
@@ -48,7 +43,7 @@
           />
 
           <v-btn
-            v-if="filters.transmission !== ''"
+            v-if="filters.transmission"
             icon
             text
             @click="resetFilter('transmission')"
@@ -66,12 +61,7 @@
             return-object
           />
 
-          <v-btn
-            v-if="filters.engine !== ''"
-            icon
-            text
-            @click="resetFilter('engine')"
-          >
+          <v-btn v-if="filters.engine" icon text @click="resetFilter('engine')">
             <v-icon icon="mdi-delete" />
           </v-btn>
         </div>
@@ -85,12 +75,7 @@
             return-object
           />
 
-          <v-btn
-            v-if="filters.body !== ''"
-            icon
-            text
-            @click="resetFilter('body')"
-          >
+          <v-btn v-if="filters.body" icon text @click="resetFilter('body')">
             <v-icon icon="mdi-delete" />
           </v-btn>
         </div>
@@ -128,12 +113,12 @@ export default {
 
   data() {
     return {
-      model: "",
+      model: null,
       filters: {
-        body: "",
-        brand: "",
-        engine: "",
-        transmission: "",
+        body: null,
+        brand: null,
+        engine: null,
+        transmission: null,
         volume: null,
       },
 
@@ -198,7 +183,6 @@ export default {
       handler() {
         if (this.isFiltersEmpty) {
           this.search();
-          this.filtersStore.loadBrands(this.filters.brand);
         }
       },
       deep: true,
@@ -210,16 +194,10 @@ export default {
   },
 
   created() {
-    const brandName = this.$route.query.brandName;
     const brandId = this.$route.query.brandId;
 
-    if (brandName && brandId) {
-      this.filtersStore.loadCars({
-        brandName,
-        brandId,
-      });
-    } else {
-      this.resetFilters();
+    if (brandId) {
+      this.filtersStore.loadCars(brandId);
     }
   },
 
@@ -260,12 +238,8 @@ export default {
       }, 500);
     },
 
-    isFilterEmpty({ value }) {
-      return value === "" || value === null || value === undefined;
-    },
-
     resetFilter(filter) {
-      this.filters[filter] = "";
+      this.filters[filter] = null;
 
       this.search();
     },
@@ -273,7 +247,7 @@ export default {
     resetFilters() {
       const keys = Object.keys(this.filters);
       keys.forEach((key) => {
-        this.filters[key] = "";
+        this.filters[key] = null;
       });
 
       this.filtersStore.setFiltered(false);
@@ -282,7 +256,6 @@ export default {
     reset() {
       this.$router.push("/");
       this.resetFilters();
-      this.filtersStore.loadBrands(this.filters.brand);
     },
   },
 };

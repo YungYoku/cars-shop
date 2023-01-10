@@ -50,7 +50,7 @@
 
     <div class="alertBottom">
       <v-alert
-        :value="alert"
+        v-if="alert"
         bottom="20px"
         color="error accent-4"
         colored-border

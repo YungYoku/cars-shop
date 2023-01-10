@@ -108,12 +108,14 @@ export default {
     font-size: 16px;
     margin: 0 10px;
     color: #333333;
-    transition: none;
+    transition: all 0.3s;
   }
 
   a:hover,
   button:hover {
     color: #ffffff;
+
+    transition: all 0.1s;
   }
 
   a {

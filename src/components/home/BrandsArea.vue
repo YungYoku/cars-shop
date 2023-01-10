@@ -45,7 +45,6 @@ export default {
       const _pages = [];
       let _page = [];
       let brands = this.filtersStore.brands;
-
       brands.forEach((brand) => {
         if (_page.length < 9) {
           _page.push(brand);

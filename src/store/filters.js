@@ -94,7 +94,7 @@ export const useFiltersStore = defineStore("filters", {
         let flag = true;
 
         filterKeys.forEach((key) => {
-          if (filters[key] !== "" && key !== "brand") {
+          if (filters[key] !== null && key !== "brand") {
             if (car[key] !== filters[key]) {
               flag = false;
             }
