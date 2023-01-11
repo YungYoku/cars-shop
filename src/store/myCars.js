@@ -28,7 +28,9 @@ export const useSavedStore = defineStore("saved", {
         const brands = docSnap.data();
 
         carIds.forEach((item) => {
-          const car = brands[item.brandId][item.modelId];
+          const brand = brands[item.brandId];
+
+          const car = brand.find((car) => car.id === item.modelId);
           car.brandId = item.brandId;
           car.modelId = item.modelId;
 

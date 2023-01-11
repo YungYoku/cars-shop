@@ -62,9 +62,9 @@ const routes = [
   },
 
   {
-    path: "/userCars",
-    name: "UserCars",
-    component: () => import("@/views/UserCarsView.vue"),
+    path: "/shopCart",
+    name: "ShopCart",
+    component: () => import("@/views/ShopCartView.vue"),
     meta: {
       auth: true,
       layout: "default",

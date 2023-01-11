@@ -44,6 +44,10 @@
           <v-btn v-else icon text @click="removeFavorite(car)">
             <v-icon icon="mdi-delete" size="24px" />
           </v-btn>
+
+          <v-btn icon text>
+            <v-icon icon="mdi-cart" size="24px" />
+          </v-btn>
         </v-card-actions>
       </v-card>
     </div>
@@ -75,7 +79,7 @@ import { useSavedStore } from "@/store/myCars";
 import { useFavoriteStore } from "@/store/favorite";
 
 export default {
-  name: "user-cars-view",
+  name: "shop-cart-view",
 
   setup: () => ({
     userStore: useUserStore(),

@@ -1,6 +1,14 @@
 <template>
   <div class="wrap">
-    <v-form @submit.prevent="log">
+    <v-form @submit.prevent="createCar">
+      <v-select
+        v-model="car.brand"
+        :items="brandNames"
+        label="Бренд"
+        persistent-hint
+        return-object
+      />
+
       <v-select
         v-model="car.body"
         :items="bodys"
@@ -43,15 +51,26 @@
         return-object
       />
 
+      <v-text-field v-model.number="car.price" label="Цена" />
+
       <v-btn type="submit">Добавить</v-btn>
     </v-form>
   </div>
 </template>
 
 <script>
-import { arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/main";
 import { bodys, engines, transmissions, volumes } from "@/js/filtersData";
+
+function v4() {
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+    (
+      c ^
+      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+    ).toString(16)
+  );
+}
 
 export default {
   name: "create-car-view",
@@ -63,27 +82,66 @@ export default {
       transmissions,
       volumes,
 
+      brands: [],
+
       car: {
-        body: "",
-        engine: "",
-        generation: 0,
-        image: "",
-        model: "",
-        transmission: "",
-        volume: 1,
+        brand: null,
+        body: null,
+        engine: null,
+        generation: null,
+        image: null,
+        model: null,
+        transmission: null,
+        volume: null,
+        price: null,
       },
     };
   },
 
+  mounted() {
+    this.loadBrands();
+  },
+
+  computed: {
+    brandNames() {
+      return this.brands.map((brand) => brand.name);
+    },
+  },
+
   methods: {
-    log() {
-      console.log(this.car);
+    isFormValid() {
+      let flag = true;
+
+      const keys = Object.keys(this.car);
+      keys.forEach((key) => {
+        if (this.car[key] === null) {
+          flag = false;
+        }
+      });
+
+      return flag;
     },
 
     async createCar() {
+      if (!this.isFormValid()) return;
+
+      const brandId = this.getBrandId(this.car.brand);
       await updateDoc(doc(db, "cars", "models"), {
-        1: arrayUnion({ id: 0, ...this.car }),
+        [brandId]: arrayUnion({ id: v4(), ...this.car }),
       });
+    },
+
+    getBrandId(brandName) {
+      const brand = this.brands.find((brand) => brand.name === brandName);
+
+      return brand.id;
+    },
+
+    async loadBrands() {
+      const docSnap = await getDoc(doc(db, "cars", "brands"));
+      if (docSnap.exists()) {
+        this.brands = docSnap.data().brands;
+      }
     },
   },
 };
@@ -100,7 +158,8 @@ export default {
   justify-content: flex-start;
 
   form {
-    min-width: 25%;
+    min-width: 300px;
+    width: 30%;
     max-width: 500px;
 
     display: flex;

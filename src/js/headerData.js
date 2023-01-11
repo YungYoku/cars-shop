@@ -12,7 +12,7 @@ export const linksLogged = [
   },
   {
     title: "Корзина",
-    url: "/userCars",
+    url: "/shopCart",
   },
 ];
 
