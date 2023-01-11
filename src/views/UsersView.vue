@@ -22,6 +22,7 @@
 <script>
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/main";
+import { sendAnalyticsRequest } from "@/js/api";
 
 export default {
   name: "users-view",
@@ -52,6 +53,8 @@ export default {
       });
 
       this.users = users;
+
+      sendAnalyticsRequest("loadUsers");
     },
   },
 };

@@ -34,6 +34,7 @@ import CarsArea from "@/components/home/CarsArea.vue";
 import BrandsArea from "@/components/home/BrandsArea.vue";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/main";
+import { sendAnalyticsRequest } from "@/js/api";
 
 export default {
   name: "home-view",
@@ -106,6 +107,8 @@ export default {
 
         this.brands = brands;
         this.setBrands(brands);
+
+        sendAnalyticsRequest("loadBrands");
       }
     },
 
@@ -125,6 +128,8 @@ export default {
         this.setCars(models);
         this.setCarPage(-1);
         this.filtered = true;
+
+        sendAnalyticsRequest("loadCars");
       }
     },
 

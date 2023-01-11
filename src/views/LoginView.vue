@@ -46,6 +46,7 @@ import { useVuelidate } from "@vuelidate/core";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useUserStore } from "@/store/user";
 import { useLoadingStore } from "@/store/loading";
+import { sendAnalyticsRequest } from "@/js/api";
 
 export default {
   name: "login-view",
@@ -127,6 +128,7 @@ export default {
           .then(this.handleLoginResponse)
           .catch(this.handleLoginError)
           .finally(() => {
+            sendAnalyticsRequest("login");
             this.loadingStore.end();
           });
       }

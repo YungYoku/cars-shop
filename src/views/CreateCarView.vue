@@ -62,6 +62,7 @@
 import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/main";
 import { bodys, engines, transmissions, volumes } from "@/js/filtersData";
+import { sendAnalyticsRequest } from "@/js/api";
 
 function v4() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
@@ -129,6 +130,8 @@ export default {
       await updateDoc(doc(db, "cars", "models"), {
         [brandId]: arrayUnion({ id: v4(), ...this.car }),
       });
+
+      sendAnalyticsRequest("createCar");
     },
 
     getBrandId(brandName) {

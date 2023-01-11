@@ -8,6 +8,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "@/main";
+import { sendAnalyticsRequest } from "@/js/api";
 
 export const useFavoriteStore = defineStore("favorite", {
   state: () => ({
@@ -53,6 +54,8 @@ export const useFavoriteStore = defineStore("favorite", {
       await updateDoc(doc(db, "users", uid), {
         favorite: arrayUnion(car),
       });
+
+      sendAnalyticsRequest("addFavorite");
     },
 
     async remove(brandId, modelId) {
@@ -65,6 +68,8 @@ export const useFavoriteStore = defineStore("favorite", {
           modelId,
         }),
       });
+
+      sendAnalyticsRequest("removeFavorite");
     },
   },
 });

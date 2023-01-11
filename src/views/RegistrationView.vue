@@ -57,6 +57,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/main";
 import { useUserStore } from "@/store/user";
 import { useLoadingStore } from "@/store/loading";
+import { sendAnalyticsRequest } from "@/js/api";
 
 export default {
   name: "registration-view",
@@ -128,6 +129,8 @@ export default {
         saved: [],
         regDate: new Date(),
       });
+
+      sendAnalyticsRequest("addEmptyUserToDb");
     },
 
     async handleRegResponse(response) {
@@ -164,6 +167,7 @@ export default {
           .then(this.handleRegResponse)
           .catch(this.handleRegError)
           .finally(() => {
+            sendAnalyticsRequest("register");
             this.loadingStore.end();
           });
       }

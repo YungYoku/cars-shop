@@ -8,6 +8,7 @@ import {
   getDoc,
   updateDoc,
 } from "firebase/firestore";
+import { sendAnalyticsRequest } from "@/js/api";
 
 export const useSavedStore = defineStore("saved", {
   state: () => ({
@@ -53,6 +54,8 @@ export const useSavedStore = defineStore("saved", {
       await updateDoc(doc(db, "users", uid), {
         saved: arrayUnion(car),
       });
+
+      sendAnalyticsRequest("addSaved");
     },
 
     async remove(brandId, modelId) {
@@ -65,6 +68,8 @@ export const useSavedStore = defineStore("saved", {
           modelId,
         }),
       });
+
+      sendAnalyticsRequest("removeSaved");
     },
   },
 });
