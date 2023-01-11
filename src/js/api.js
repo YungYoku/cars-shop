@@ -2,20 +2,6 @@ import axios from "axios";
 import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/main";
 
-export const requestTypes = [
-  "login",
-  "register",
-  "addEmptyUserToDb",
-  "loadBrands",
-  "loadCars",
-  "loadUsers",
-  "createCar",
-  "addFavorite",
-  "removeFavorite",
-  "addSaved",
-  "removeSaved",
-];
-
 const getIp = async () => {
   return await axios
     .get("https://api.db-ip.com/v2/free/self")

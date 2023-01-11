@@ -24,14 +24,26 @@
 </template>
 
 <script>
-import { getAnalytics, requestTypes } from "@/js/api";
+import { getAnalytics } from "@/js/api";
 
 export default {
   data() {
     return {
       analytics: [],
       selectedType: "",
-      requestTypes,
+      requestTypes: [
+        "login",
+        "register",
+        "addEmptyUserToDb",
+        "loadBrands",
+        "loadCars",
+        "loadUsers",
+        "createCar",
+        "addFavorite",
+        "removeFavorite",
+        "addSaved",
+        "removeSaved",
+      ],
     };
   },
 
