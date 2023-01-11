@@ -11,9 +11,9 @@
         min-width="240"
         width="100%"
       >
-        <v-img :src="car.image" class="white--text align-end" height="200px">
-          <v-card-title>{{ car.model }}</v-card-title>
-        </v-img>
+        <v-img :src="car.image" class="white--text align-end" height="200px" />
+
+        <v-card-title>{{ car.model }}</v-card-title>
 
         <v-card-subtitle class="pb-0">
           {{ car.generation }}

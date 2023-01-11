@@ -2,27 +2,23 @@ import logo from "../assets/logo.svg";
 
 export const linksLogged = [
   {
-    title: "ГЛАВНАЯ",
+    title: "Главная",
     url: "/",
     img: logo,
   },
   {
-    title: "МОИ АВТОМОБИЛИ",
-    url: "/userCars",
-  },
-  {
-    title: "ИЗБРАННОЕ",
+    title: "Избранное",
     url: "/favorite",
   },
   {
-    title: "ВСЕ ПОЛЬЗОВАТЕЛИ",
-    url: "/users",
+    title: "Корзина",
+    url: "/userCars",
   },
 ];
 
 export const linksUnlogged = [
   {
-    title: "ВОЙТИ",
+    title: "Войти",
     url: "/login",
   },
 ];

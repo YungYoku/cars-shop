@@ -45,12 +45,9 @@
 
 <script>
 import image from "@/assets/image.png";
-import { useFiltersStore } from "@/store/filters";
 
 export default {
   name: "brand-card",
-
-  setup: () => ({ filtersStore: useFiltersStore() }),
 
   props: {
     brand: {
@@ -79,7 +76,7 @@ export default {
       };
 
       this.$router.push({ path: "/", query });
-      this.filtersStore.loadCars(this.$props.brand.id);
+      this.$emit("loadCars", this.$props.brand.id);
     },
 
     swapDescription() {

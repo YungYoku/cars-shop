@@ -2,7 +2,7 @@
   <div class="login">
     <h2>Вход</h2>
 
-    <v-form novalidate @submit.prevent="submit">
+    <v-form novalidate @submit.prevent="login">
       <v-text-field
         v-model.trim="email"
         :error-messages="emailErrors"
@@ -33,6 +33,10 @@
         <h5>Нет аккаунта? Зарегистрироваться.</h5>
       </router-link>
     </v-form>
+
+    <v-alert v-if="alert" class="alert" prominent type="error" variant="flat">
+      {{ alert }}
+    </v-alert>
   </div>
 </template>
 
@@ -41,11 +45,16 @@ import { minLength, required } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useUserStore } from "@/store/user";
+import { useLoadingStore } from "@/store/loading";
 
 export default {
   name: "login-view",
 
-  setup: () => ({ v$: useVuelidate(), userStore: useUserStore() }),
+  setup: () => ({
+    v$: useVuelidate(),
+    userStore: useUserStore(),
+    loadingStore: useLoadingStore(),
+  }),
 
   validations: {
     email: { required },
@@ -68,24 +77,58 @@ export default {
     email: "",
     password: "",
     emailErrors: "",
+    emailError: null,
     passwordErrors: "",
+    passwordError: null,
   }),
 
+  watch: {
+    email() {
+      this.emailError = null;
+    },
+
+    password() {
+      this.passwordError = null;
+    },
+  },
+
+  computed: {
+    alert() {
+      return this.emailError || this.passwordError || null;
+    },
+  },
+
   methods: {
-    async submit() {
+    handleLoginError(error) {
+      switch (error.code) {
+        case "auth/invalid-email":
+          this.emailError = "Несуществующая почта";
+          break;
+        case "auth/wrong-password":
+          this.passwordError = "Неправильный пароль";
+          break;
+      }
+    },
+
+    async handleLoginResponse(response) {
+      const uid = response.user.uid;
+
+      this.userStore.updateUid(uid);
+      await this.userStore.loadUser();
+
+      await this.$router.push("/");
+    },
+
+    async login() {
       const isFormCorrect = await this.v$.$validate();
       if (isFormCorrect) {
-        signInWithEmailAndPassword(getAuth(), this.email, this.password).then(
-          async (response) => {
-            const uid = response.user.uid;
-
-            this.userStore.updateUid(uid);
-
-            await this.userStore.loadUser();
-
-            await this.$router.push("/");
-          }
-        );
+        this.loadingStore.start();
+        await signInWithEmailAndPassword(getAuth(), this.email, this.password)
+          .then(this.handleLoginResponse)
+          .catch(this.handleLoginError)
+          .finally(() => {
+            this.loadingStore.end();
+          });
       }
     },
   },
@@ -96,11 +139,15 @@ export default {
 .login {
   width: 100%;
   height: 100%;
+
+  position: relative;
+
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   gap: 20px;
+
   padding: 50px 0 50px 0;
 
   h2 {
@@ -127,17 +174,15 @@ export default {
     border-radius: 10px;
     box-shadow: 0 9px 15px 4px #e8e7e7;
 
-    label img {
-      width: 20px;
-      height: 20px;
-      position: absolute;
-      right: 0;
-      top: 0;
-      cursor: pointer;
-    }
-
-    .btnSubmit {
-      border-radius: 20px;
+    label {
+      img {
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        right: 0;
+        top: 0;
+        cursor: pointer;
+      }
     }
 
     .swap {
@@ -145,28 +190,38 @@ export default {
       justify-content: center;
 
       h5 {
+        position: relative;
+
+        font-size: 13px;
         font-weight: 600;
         color: gray;
-        position: relative;
+
         cursor: pointer;
       }
 
       h5::after {
         content: "";
         width: 0;
-        height: 2px;
+        height: 1px;
         position: absolute;
-        background-color: #333333;
+        background-color: #666666;
         left: 0;
         bottom: -2px;
-        transition: all 0.4s;
+        transition: all 0.2s;
       }
 
       h5:hover::after {
         width: 100%;
-        transition: all 0.4s;
+        transition: all 0.2s;
       }
     }
+  }
+
+  .alert {
+    position: absolute;
+    bottom: 0;
+
+    z-index: 4;
   }
 
   @media screen and (max-width: 768px) {

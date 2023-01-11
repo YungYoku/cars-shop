@@ -2,7 +2,7 @@
   <div class="registration">
     <h2>Регистрация</h2>
 
-    <v-form @submit.prevent="submit">
+    <v-form @submit.prevent="register">
       <v-text-field
         v-model.trim="name"
         :error-messages="nameErrors"
@@ -42,6 +42,10 @@
         <h5>Есть аккаунт? Войти.</h5>
       </router-link>
     </v-form>
+
+    <v-alert v-if="alert" class="alert" prominent type="error" variant="flat">
+      {{ alert }}
+    </v-alert>
   </div>
 </template>
 
@@ -52,11 +56,16 @@ import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/main";
 import { useUserStore } from "@/store/user";
+import { useLoadingStore } from "@/store/loading";
 
 export default {
   name: "registration-view",
 
-  setup: () => ({ v$: useVuelidate(), userStore: useUserStore() }),
+  setup: () => ({
+    v$: useVuelidate(),
+    userStore: useUserStore(),
+    loadingStore: useLoadingStore(),
+  }),
 
   data: () => ({
     name: "",
@@ -65,6 +74,8 @@ export default {
     emailErrors: "",
     nameErrors: "",
     passwordErrors: "",
+    emailError: null,
+    passwordError: null,
   }),
 
   validations() {
@@ -92,6 +103,22 @@ export default {
     };
   },
 
+  watch: {
+    email() {
+      this.emailError = null;
+    },
+
+    password() {
+      this.passwordError = null;
+    },
+  },
+
+  computed: {
+    alert() {
+      return this.emailError || this.passwordError || null;
+    },
+  },
+
   methods: {
     async createEmptyUser(uid, name) {
       await setDoc(doc(db, "users", uid), {
@@ -103,23 +130,42 @@ export default {
       });
     },
 
-    async submit() {
+    async handleRegResponse(response) {
+      const uid = response.user.uid;
+      await this.createEmptyUser(uid, this.name);
+
+      this.userStore.updateUid(uid);
+
+      await this.userStore.loadUser();
+
+      await this.$router.push("/");
+    },
+
+    handleRegError(error) {
+      switch (error.code) {
+        case "auth/invalid-email":
+          this.emailError = "Неправильный формат почты";
+          break;
+        case "auth/email-already-in-use":
+          this.emailError = "Почта уже использована";
+          break;
+      }
+    },
+
+    async register() {
       const isFormCorrect = await this.v$.$validate();
       if (isFormCorrect) {
+        this.loadingStore.start();
         await createUserWithEmailAndPassword(
           getAuth(),
           this.email,
           this.password
-        ).then(async (response) => {
-          const uid = response.user.uid;
-          await this.createEmptyUser(uid, this.name);
-
-          this.userStore.updateUid(uid);
-
-          await this.userStore.loadUser();
-
-          await this.$router.push("/");
-        });
+        )
+          .then(this.handleRegResponse)
+          .catch(this.handleRegError)
+          .finally(() => {
+            this.loadingStore.end();
+          });
       }
     },
   },
@@ -130,11 +176,15 @@ export default {
 .registration {
   width: 100%;
   height: 100%;
+
+  position: relative;
+
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   gap: 20px;
+
   padding: 50px 0 50px 0;
 
   h2 {
@@ -161,17 +211,15 @@ export default {
     border-radius: 10px;
     box-shadow: 0 9px 15px 4px #e8e7e7;
 
-    label img {
-      width: 20px;
-      height: 20px;
-      position: absolute;
-      right: 0;
-      top: 0;
-      cursor: pointer;
-    }
-
-    .btnSubmit {
-      border-radius: 20px;
+    label {
+      img {
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        right: 0;
+        top: 0;
+        cursor: pointer;
+      }
     }
 
     .swap {
@@ -179,28 +227,38 @@ export default {
       justify-content: center;
 
       h5 {
+        position: relative;
+
+        font-size: 13px;
         font-weight: 600;
         color: gray;
-        position: relative;
+
         cursor: pointer;
       }
 
       h5::after {
         content: "";
         width: 0;
-        height: 2px;
+        height: 1px;
         position: absolute;
-        background-color: #333333;
+        background-color: #666666;
         left: 0;
         bottom: -2px;
-        transition: all 0.4s;
+        transition: all 0.2s;
       }
 
       h5:hover::after {
         width: 100%;
-        transition: all 0.4s;
+        transition: all 0.2s;
       }
     }
+  }
+
+  .alert {
+    position: absolute;
+    bottom: 0;
+
+    z-index: 4;
   }
 
   @media screen and (max-width: 768px) {

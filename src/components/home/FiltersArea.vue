@@ -13,7 +13,7 @@
         <v-autocomplete
           v-model="model"
           :clearable="true"
-          :items="filtersStore.carNamesList"
+          :items="carNamesList"
           label="Модель"
           @keyup="loadCarNamesList($event.target.value)"
           @click:clear="loadCarNamesList('')"
@@ -102,14 +102,26 @@ import {
   transmissions as dbTransmissions,
   volumes as dbVolumes,
 } from "@/js/filtersData.js";
-import { useFiltersStore } from "@/store/filters";
 
 export default {
   name: "filters-area",
 
-  setup: () => ({
-    filtersStore: useFiltersStore(),
-  }),
+  props: {
+    brands: {
+      type: Array,
+      required: true,
+    },
+
+    carNamesList: {
+      type: Array,
+      required: true,
+    },
+
+    propFiltered: {
+      type: Boolean,
+      required: true,
+    },
+  },
 
   data() {
     return {
@@ -129,18 +141,18 @@ export default {
       transmissions: dbTransmissions,
       volumes: dbVolumes,
 
-      modelsShowing: false,
+      filtered: false,
     };
   },
 
   computed: {
     isBrandFiltered() {
-      return !!(this.filters.brand && this.filtersStore.filtered);
+      return !!(this.filters.brand && (this.filtered || this.propFiltered));
     },
 
-    brandRoute() {
+    brandRouteQuery() {
       const brandId = this.$route.query.brandId;
-      const brands = this.filtersStore.brands;
+      const brands = this.brands;
 
       if (brandId && brands.length) {
         const brand = brands.find((brand) => brand.id === brandId);
@@ -155,7 +167,8 @@ export default {
 
       return {
         id: brandId,
-        name: "",
+        name: null,
+        routeName: this.$route.name,
       };
     },
 
@@ -164,16 +177,20 @@ export default {
     },
 
     isFiltersEmptyExceptBrand() {
-      return checkIsFiltersEmptyExceptBrand(this.filters);
+      return checkIsFiltersEmptyExceptBrand(this.filters) && this.filters.brand;
     },
   },
 
   watch: {
-    brandRoute: {
+    brandRouteQuery: {
       immediate: true,
       handler() {
-        this.filters.brand = this.brandRoute.name;
-        this.filtersStore.loadCars(this.brandRoute.id);
+        this.filters.brand = this.brandRouteQuery.name;
+        if (this.brandRouteQuery.id) {
+          this.$emit("loadCars", this.brandRouteQuery.id);
+        } else if (this.brandRouteQuery.routeName === "Home") {
+          this.reset();
+        }
       },
       deep: true,
     },
@@ -197,7 +214,8 @@ export default {
     const brandId = this.$route.query.brandId;
 
     if (brandId) {
-      this.filtersStore.loadCars(brandId);
+      this.filtered = true;
+      this.$emit("loadCars", brandId);
     }
   },
 
@@ -206,14 +224,12 @@ export default {
       if (this.sendOpportunity) {
         this.startSendTimer();
 
-        if (this.isFiltersEmpty) {
-          this.filtersStore.setFiltered(false);
-          this.filtersStore.setCars([]);
-        } else if (this.isFiltersEmptyExceptBrand) {
-          this.filtersStore.setFiltered(false);
-          this.filtersStore.loadBrands(this.filters.brand);
+        if (this.isFiltersEmptyExceptBrand) {
+          this.filtered = true;
+          this.$emit("filterBrands", this.filters.brand);
         } else if (!this.isFiltersEmpty) {
-          this.filtersStore.filterCars(this.filters);
+          this.filtered = true;
+          this.$emit("filterCars", this.filters);
         }
       }
     },
@@ -221,7 +237,7 @@ export default {
     loadCarNamesList(name) {
       if (this.sendOpportunity) {
         this.startSendTimer();
-        this.filtersStore.loadCarNamesList({ name });
+        this.$emit("loadCarNamesList", name);
       }
     },
 
@@ -245,17 +261,18 @@ export default {
     },
 
     resetFilters() {
+      this.filtered = false;
+
       const keys = Object.keys(this.filters);
       keys.forEach((key) => {
         this.filters[key] = null;
       });
-
-      this.filtersStore.setFiltered(false);
     },
 
-    reset() {
-      this.$router.push("/");
+    async reset() {
       this.resetFilters();
+      await this.$router.push("/");
+      this.$emit("reset");
     },
   },
 };

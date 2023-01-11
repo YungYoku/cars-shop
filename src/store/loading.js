@@ -8,12 +8,12 @@ export const useLoadingStore = defineStore("loading", {
   getters: {},
 
   actions: {
-    startLoading(state) {
-      state.loading = true;
+    start() {
+      this.loading = true;
     },
 
-    endLoading(state) {
-      state.loading = false;
+    end() {
+      this.loading = false;
     },
   },
 });

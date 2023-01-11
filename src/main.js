@@ -1,11 +1,11 @@
 import { createApp } from "vue";
 import App from "./App.vue";
+import { createPinia } from "pinia";
 import router from "./router";
 import "./assets/scss/main.scss";
 import vuetify from "@/plugins/vuetify";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { createPinia } from "pinia";
 
 const app = createApp(App);
 

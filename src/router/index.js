@@ -1,10 +1,19 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useUserStore } from "@/store/user";
+
+const isAdmin = () => {
+  const userStore = useUserStore();
+  if (userStore.user.status === "admin") {
+    return true;
+  }
+  return false;
+};
 
 const routes = [
   {
     path: "/",
     name: "Home",
-    component: () => import("../views/HomeView.vue"),
+    component: () => import("@/views/HomeView.vue"),
     meta: {
       auth: true,
       layout: "default",
@@ -19,7 +28,7 @@ const routes = [
   {
     path: "/car",
     name: "Car",
-    component: () => import("../views/CarView.vue"),
+    component: () => import("@/views/CarView.vue"),
     meta: {
       auth: true,
       layout: "default",
@@ -33,7 +42,7 @@ const routes = [
   {
     path: "/login",
     name: "Login",
-    component: () => import("../views/LoginView.vue"),
+    component: () => import("@/views/LoginView.vue"),
     meta: {
       auth: false,
       layout: "default",
@@ -44,7 +53,7 @@ const routes = [
   {
     path: "/reg",
     name: "Registration",
-    component: () => import("../views/RegistrationView.vue"),
+    component: () => import("@/views/RegistrationView.vue"),
     meta: {
       auth: false,
       layout: "default",
@@ -55,7 +64,7 @@ const routes = [
   {
     path: "/userCars",
     name: "UserCars",
-    component: () => import("../views/UserCarsView.vue"),
+    component: () => import("@/views/UserCarsView.vue"),
     meta: {
       auth: true,
       layout: "default",
@@ -66,7 +75,7 @@ const routes = [
   {
     path: "/favorite",
     name: "Favorite",
-    component: () => import("../views/FavoriteView.vue"),
+    component: () => import("@/views/FavoriteView.vue"),
     meta: {
       auth: true,
       layout: "default",
@@ -77,7 +86,7 @@ const routes = [
   {
     path: "/users",
     name: "Users",
-    component: () => import("../views/UsersView.vue"),
+    component: () => import("@/views/UsersView.vue"),
     meta: {
       auth: true,
       layout: "default",
@@ -86,13 +95,32 @@ const routes = [
   },
 
   {
-    path: "/404",
-    name: "Page404",
-    component: () => import("../views/Page404View.vue"),
+    path: "/createCar",
+    name: "CreateCar",
+    component: () => import("@/views/CreateCarView.vue"),
     meta: {
-      auth: false,
-      layout: "error",
-      title: "404",
+      auth: true,
+      layout: "default",
+      title: "Создание машины",
+    },
+    beforeEnter: () => {
+      if (isAdmin()) return true;
+      return "/";
+    },
+  },
+
+  {
+    path: "/analytics",
+    name: "Analytics",
+    component: () => import("@/views/AnalyticsView.vue"),
+    meta: {
+      auth: true,
+      layout: "default",
+      title: "Аналитика",
+    },
+    beforeEnter: () => {
+      if (isAdmin()) return true;
+      return "/";
     },
   },
 ];
@@ -104,10 +132,6 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const isLoggedIn = !!localStorage.uid;
-
-  if (to.name === "Page404") {
-    return true;
-  }
 
   if (to.meta.auth) {
     if (isLoggedIn) {

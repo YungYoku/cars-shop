@@ -1,55 +1,58 @@
 <template>
-  <div class="header">
-    <v-navigation-drawer v-model="drawer" app color="#9bb1ff" temporary>
-      <v-list>
-        <v-list-item v-for="link of links" :key="link.title">
-          <router-link :to="link.url" exact-path>
-            <img v-if="link.img" :src="link.img" alt="Картинка" />
-            {{ link.title }}
-          </router-link>
-        </v-list-item>
+  <v-app-bar prominent>
+    <v-app-bar-nav-icon
+      class="hidden-md-and-up"
+      variant="text"
+      @click.stop="drawer = !drawer"
+    />
 
-        <v-list-item v-if="userStore.isLoggedIn">
-          <button @click="logout">ВЫЙТИ</button>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+    <v-toolbar-items class="hidden-sm-and-down">
+      <router-link
+        v-for="link in links"
+        :key="link.title + link.url"
+        :to="link.url"
+        exact-path
+      >
+        {{ link.title }}
+      </router-link>
 
-    <v-app-bar app dark>
-      <v-app-bar-nav-icon class="hidden-md-and-up" @click="drawer = !drawer" />
-      <v-toolbar-title class="hidden-md-and-up">
-        {{ routeName }}
-      </v-toolbar-title>
-      <v-spacer />
-      <v-toolbar-items class="hidden-sm-and-down">
-        <router-link
-          v-for="link in links"
-          :key="link.title + link.url"
-          :to="link.url"
-          exact-path
-        >
-          <img v-if="link.img" :src="link.img" alt="Картинка" />
-          {{ link.title }}
-        </router-link>
-        <button v-if="userStore.isLoggedIn" @click="logout">ВЫЙТИ</button>
-      </v-toolbar-items>
-    </v-app-bar>
-  </div>
+      <the-header-admin-links />
+
+      <button v-if="userStore.isLoggedIn" @click="logout">ВЫЙТИ</button>
+    </v-toolbar-items>
+  </v-app-bar>
+
+  <v-navigation-drawer v-model="drawer" temporary>
+    <v-list class="mobile-nav" nav>
+      <router-link
+        v-for="link in links"
+        :key="link.title + link.url"
+        :to="link.url"
+        exact-path
+      >
+        {{ link.title }}
+      </router-link>
+
+      <the-header-admin-links />
+
+      <button v-if="userStore.isLoggedIn" @click="logout">ВЫЙТИ</button>
+    </v-list>
+  </v-navigation-drawer>
 </template>
 
 <script>
 import { linksLogged, linksUnlogged } from "@/js/headerData.js";
 import { useUserStore } from "@/store/user";
-import { useFiltersStore } from "@/store/filters";
 import { useSavedStore } from "@/store/myCars";
 import { useFavoriteStore } from "@/store/favorite";
+import TheHeaderAdminLinks from "@/components/TheHeaderAdminLinks.vue";
 
 export default {
   name: "the-header",
+  components: { TheHeaderAdminLinks },
 
   setup: () => ({
     userStore: useUserStore(),
-    filtersStore: useFiltersStore(),
     savedStore: useSavedStore(),
     favoriteStore: useFavoriteStore(),
   }),
@@ -80,7 +83,6 @@ export default {
   methods: {
     logout() {
       this.userStore.logout();
-      this.filtersStore.$reset();
       this.favoriteStore.$reset();
       this.savedStore.$reset();
       this.$router.push("/login");
@@ -89,19 +91,12 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.header {
-  width: 100%;
-  height: 60px;
+<style lang="scss">
+header {
+  backdrop-filter: blur(10px);
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  header {
+  &.v-app-bar.v-toolbar {
     background-color: rgba(102, 135, 253, 0.7);
-
-    backdrop-filter: blur(10px);
   }
 
   .router-link-active {
@@ -110,10 +105,17 @@ export default {
 
   a,
   button {
-    font-size: 16px;
     margin: 0 10px;
+
+    font-size: 16px;
+    text-transform: uppercase;
     color: #333333;
+
     transition: all 0.3s;
+
+    @media (max-width: 1024px) {
+      font-size: 15px;
+    }
   }
 
   a:hover,
@@ -127,12 +129,24 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+}
 
-    img {
-      width: 32px;
-      height: 32px;
-      margin-right: 10px;
-    }
+nav {
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 20px;
+
+    padding: 30px 10px 10px 10px;
+  }
+
+  a {
+    margin: 0;
+
+    text-transform: uppercase;
   }
 }
 </style>

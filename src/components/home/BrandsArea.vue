@@ -9,6 +9,7 @@
         v-for="brand in pages[page - 1]"
         :key="brand.id"
         :brand="brand"
+        @loadCars="loadCars"
       />
     </div>
 
@@ -24,14 +25,18 @@
 
 <script>
 import BrandsAreaCard from "@/components/home/BrandsAreaCard.vue";
-import { useFiltersStore } from "@/store/filters";
 
 export default {
   name: "brands-area",
 
   components: { BrandsAreaCard },
 
-  setup: () => ({ filtersStore: useFiltersStore() }),
+  props: {
+    brands: {
+      type: Array,
+      required: true,
+    },
+  },
 
   data() {
     return {
@@ -44,7 +49,7 @@ export default {
     pages() {
       const _pages = [];
       let _page = [];
-      let brands = this.filtersStore.brands;
+      let brands = this.brands;
       brands.forEach((brand) => {
         if (_page.length < 9) {
           _page.push(brand);
@@ -59,6 +64,12 @@ export default {
       }
 
       return _pages;
+    },
+  },
+
+  methods: {
+    loadCars(brandId) {
+      this.$emit("loadCars", brandId);
     },
   },
 };

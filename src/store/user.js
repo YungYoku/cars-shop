@@ -19,7 +19,7 @@ export const useUserStore = defineStore("user", {
 
   getters: {
     isLoggedIn() {
-      return this.uid.length > 0;
+      return this.uid.length > 0 && this.user.status;
     },
   },
 
@@ -30,7 +30,7 @@ export const useUserStore = defineStore("user", {
     },
 
     async loadUser() {
-      if (this.isLoggedIn) {
+      if (this.uid) {
         await onSnapshot(doc(db, "users", this.uid), async (response) => {
           if (response.exists()) {
             this.user = response.data();

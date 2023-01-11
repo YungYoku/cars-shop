@@ -51,8 +51,6 @@ export const useSavedStore = defineStore("saved", {
       await updateDoc(doc(db, "users", uid), {
         saved: arrayUnion(car),
       });
-
-      this.cars.push(car);
     },
 
     async remove(brandId, modelId) {

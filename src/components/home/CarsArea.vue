@@ -6,7 +6,7 @@
 
     <div v-if="pages.length" class="wrap">
       <cars-area-card
-        v-for="(car, i) in pages[filtersStore.carPages >= 0 ? 0 : page - 1]"
+        v-for="(car, i) in pages[carPages >= 0 ? 0 : page - 1]"
         :key="car.id + i"
         :car="car"
       />
@@ -24,14 +24,22 @@
 
 <script>
 import CarsAreaCard from "@/components/home/CarsAreaCard.vue";
-import { useFiltersStore } from "@/store/filters";
 
 export default {
   name: "cars-area",
 
-  setup: () => ({ filtersStore: useFiltersStore() }),
-
   components: { CarsAreaCard },
+
+  props: {
+    cars: {
+      type: Array,
+      required: true,
+    },
+    carPages: {
+      type: Number,
+      required: true,
+    },
+  },
 
   data() {
     return {
@@ -45,7 +53,7 @@ export default {
       const _pages = [];
       let _page = [];
 
-      this.filtersStore.cars.forEach((car) => {
+      this.cars.forEach((car) => {
         if (_page.length < 9) {
           _page.push(car);
         } else {
@@ -53,7 +61,7 @@ export default {
           _page = [];
         }
       });
-      if (this.filtersStore.cars.length < 9 && !_pages.length && _page.length) {
+      if (this.cars.length < 9 && !_pages.length && _page.length) {
         _pages.push(_page);
         _page = [];
       }
@@ -62,17 +70,15 @@ export default {
     },
 
     pagesAmount() {
-      return this.filtersStore.carPages >= 0
-        ? this.filtersStore.carPages - 1
-        : this.pages.length;
+      return this.carPages >= 0 ? this.carPages - 1 : this.pages.length;
     },
   },
 
   watch: {
     page() {
-      if (this.filtersStore.carPages >= 0) {
-        this.filtersStore.commit("filters/setPage", this.page);
-        this.filtersStore.filterCars();
+      if (this.carPages >= 0) {
+        this.$emit("setPage", this.page);
+        //this.filtersStore.filterCars();
       }
     },
   },

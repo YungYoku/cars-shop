@@ -51,8 +51,6 @@ export const useFavoriteStore = defineStore("favorite", {
       await updateDoc(doc(db, "users", uid), {
         favorite: arrayUnion(car),
       });
-
-      this.favorite.push(car);
     },
 
     async remove(brandId, modelId) {
