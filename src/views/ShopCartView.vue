@@ -19,6 +19,8 @@
           {{ car.generation }}
         </v-card-subtitle>
 
+        <v-card-subtitle> {{ car.price }} ₽</v-card-subtitle>
+
         <v-card-text class="text--primary">
           <div>Страна: {{ car.country }}</div>
 
@@ -28,26 +30,18 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-btn icon text @click="showPopup(car)">
-            <v-icon icon="mdi-minus" size="24px" />
-          </v-btn>
+          <v-btn icon="mdi-cart-off" text @click="showPopup(car)" />
 
           <v-btn
             v-if="!isItMyFavorite(car)"
-            icon
+            icon="mdi-star"
             text
             @click="addFavorite(car)"
-          >
-            <v-icon icon="mdi-bookmark" size="24px" />
-          </v-btn>
+          />
 
-          <v-btn v-else icon text @click="removeFavorite(car)">
-            <v-icon icon="mdi-delete" size="24px" />
-          </v-btn>
+          <v-btn v-else icon="mdi-star-off" text @click="removeFavorite(car)" />
 
-          <v-btn icon text>
-            <v-icon icon="mdi-cart" size="24px" />
-          </v-btn>
+          <v-btn icon="mdi-cart-arrow-right" text @click="buy" />
         </v-card-actions>
       </v-card>
     </div>
@@ -134,6 +128,10 @@ export default {
     hidePopup() {
       this.alert = false;
     },
+
+    buy() {
+      alert("Платежная система не подключена :)");
+    },
   },
 };
 </script>
@@ -141,6 +139,10 @@ export default {
 <style lang="scss" scoped>
 .userCars {
   padding: 20px;
+
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
 
   .wrap {
     margin: 0 0 10px 0;

@@ -8,23 +8,17 @@
         :src="car.image"
         class="white--text align-end"
         height="400px"
-      >
-        <v-card-title>{{ car.model }}</v-card-title>
-      </v-img>
+      />
+
+      <v-card-title>{{ car.model }}</v-card-title>
+      <v-card-subtitle> {{ car.price }} ₽</v-card-subtitle>
 
       <v-card-actions>
-        <v-btn v-if="!isItMyCar" icon @click="addCar">
-          <v-icon icon="mdi-plus" size="24px" />
-        </v-btn>
-        <v-btn v-else icon @click="removeCar">
-          <v-icon icon="mdi-minus" size="24px" />
-        </v-btn>
-        <v-btn v-if="!isItMyFavorite" icon @click="addFavorite">
-          <v-icon icon="mdi-bookmark" size="24px" />
-        </v-btn>
-        <v-btn v-else icon @click="removeFavorite">
-          <v-icon icon="mdi-delete" size="24px" />
-        </v-btn>
+        <v-btn v-if="!isItMyCar" icon="mdi-cart" @click="addCar" />
+        <v-btn v-else icon="mdi-cart-off" @click="removeCar" />
+
+        <v-btn v-if="!isItMyFavorite" icon="mdi-star" @click="addFavorite" />
+        <v-btn v-else icon="mdi-star-off" @click="removeFavorite" />
       </v-card-actions>
 
       <v-card-subtitle class="pb-0" />
@@ -86,7 +80,6 @@
 
 <script>
 import CarsAreaCard from "@/components/home/CarsAreaCard.vue";
-import GenerationInfo from "@/components/userCars/GenerationInfo.vue";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/main";
 import image from "@/assets/image.png";
@@ -97,7 +90,7 @@ import { useUserStore } from "@/store/user";
 export default {
   name: "car-view",
 
-  components: { CarsAreaCard, GenerationInfo },
+  components: { CarsAreaCard },
 
   setup: () => ({
     userStore: useUserStore(),

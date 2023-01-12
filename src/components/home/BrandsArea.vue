@@ -105,13 +105,13 @@ export default {
   }
 
   @media (max-width: 768px) {
+    padding: 0 0 50px 0;
+
     .wrap {
+      padding: 0;
+
       grid-template: repeat(9, auto) / 1fr;
     }
-  }
-
-  @media (max-width: 768px) {
-    padding: 0 0 50px 0;
   }
 }
 </style>

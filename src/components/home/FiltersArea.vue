@@ -3,10 +3,14 @@
     <h4>Фильтры</h4>
 
     <v-form @submit.prevent="search">
-      <v-text-field
-        v-model.trim="filters.brand"
+      <v-autocomplete
+        v-model="brand"
+        :clearable="true"
         :disabled="isBrandFiltered"
+        :items="brandNamesList"
         label="Бренд"
+        @keyup="updateBrandNamesList($event.target.value)"
+        @click:clear="updateBrandNamesList"
       />
 
       <template v-if="isBrandFiltered">
@@ -15,8 +19,8 @@
           :clearable="true"
           :items="carNamesList"
           label="Модель"
-          @keyup="loadCarNamesList($event.target.value)"
-          @click:clear="loadCarNamesList('')"
+          @keyup="updateCarNamesList($event.target.value)"
+          @click:clear="updateCarNamesList"
         />
 
         <div class="filter">
@@ -28,9 +32,12 @@
             return-object
           />
 
-          <v-btn v-if="filters.volume" icon text @click="resetFilter('volume')">
-            <v-icon icon="mdi-delete" />
-          </v-btn>
+          <v-btn
+            v-if="filters.volume"
+            icon="mdi-delete"
+            text
+            @click="resetFilter('volume')"
+          />
         </div>
 
         <div class="filter">
@@ -44,12 +51,10 @@
 
           <v-btn
             v-if="filters.transmission"
-            icon
+            icon="mdi-delete"
             text
             @click="resetFilter('transmission')"
-          >
-            <v-icon icon="mdi-delete" />
-          </v-btn>
+          />
         </div>
 
         <div class="filter">
@@ -61,9 +66,12 @@
             return-object
           />
 
-          <v-btn v-if="filters.engine" icon text @click="resetFilter('engine')">
-            <v-icon icon="mdi-delete" />
-          </v-btn>
+          <v-btn
+            v-if="filters.engine"
+            icon="mdi-delete"
+            text
+            @click="resetFilter('engine')"
+          />
         </div>
 
         <div class="filter">
@@ -75,9 +83,12 @@
             return-object
           />
 
-          <v-btn v-if="filters.body" icon text @click="resetFilter('body')">
-            <v-icon icon="mdi-delete" />
-          </v-btn>
+          <v-btn
+            v-if="filters.body"
+            icon="mdi-delete"
+            text
+            @click="resetFilter('body')"
+          />
         </div>
       </template>
 
@@ -112,7 +123,7 @@ export default {
       required: true,
     },
 
-    carNamesList: {
+    cars: {
       type: Array,
       required: true,
     },
@@ -125,16 +136,19 @@ export default {
 
   data() {
     return {
+      brand: null,
       model: null,
       filters: {
         body: null,
-        brand: null,
         engine: null,
         transmission: null,
         volume: null,
       },
 
       sendOpportunity: true,
+
+      carNamesList: [],
+      brandNamesList: [],
 
       bodys: dbBodys,
       engines: dbEngines,
@@ -147,7 +161,7 @@ export default {
 
   computed: {
     isBrandFiltered() {
-      return !!(this.filters.brand && (this.filtered || this.propFiltered));
+      return !!(this.brand && (this.filtered || this.propFiltered));
     },
 
     brandRouteQuery() {
@@ -173,11 +187,15 @@ export default {
     },
 
     isFiltersEmpty() {
-      return checkIsFiltersEmpty(this.filters);
+      return (
+        checkIsFiltersEmpty(this.filters) &&
+        this.brand === null &&
+        this.model === null
+      );
     },
 
     isFiltersEmptyExceptBrand() {
-      return checkIsFiltersEmptyExceptBrand(this.filters) && this.filters.brand;
+      return checkIsFiltersEmptyExceptBrand(this.filters) && this.brand;
     },
   },
 
@@ -185,7 +203,7 @@ export default {
     brandRouteQuery: {
       immediate: true,
       handler() {
-        this.filters.brand = this.brandRouteQuery.name;
+        this.brand = this.brandRouteQuery.name;
         if (this.brandRouteQuery.id) {
           this.$emit("loadCars", this.brandRouteQuery.id);
         } else if (this.brandRouteQuery.routeName === "Home") {
@@ -203,6 +221,10 @@ export default {
         }
       },
       deep: true,
+    },
+
+    brand() {
+      this.loadBrand();
     },
 
     model() {
@@ -226,7 +248,7 @@ export default {
 
         if (this.isFiltersEmptyExceptBrand) {
           this.filtered = true;
-          this.$emit("filterBrands", this.filters.brand);
+          this.$emit("filterBrands", this.brand);
         } else if (!this.isFiltersEmpty) {
           this.filtered = true;
           this.$emit("filterCars", this.filters);
@@ -234,16 +256,37 @@ export default {
       }
     },
 
-    loadCarNamesList(name) {
-      if (this.sendOpportunity) {
-        this.startSendTimer();
-        this.$emit("loadCarNamesList", name);
-      }
+    updateCarNamesList(name) {
+      const cars = this.cars.filter((car) => car.model.startsWith(name));
+      this.carNamesList = cars.map((car) => car.model);
+    },
+
+    updateBrandNamesList(name) {
+      const brands = this.brands.filter((brand) => brand.name.startsWith(name));
+      this.brandNamesList = brands.map((brand) => brand.name);
     },
 
     loadCar() {
-      if (this.model !== null && this.model !== undefined && this.model > 0) {
-        this.$router.push({ path: "/car", query: { id: this.model } });
+      const car = this.cars.find((car) => car.model === this.model);
+      if (car) {
+        const brandId = this.$route.query.brandId;
+        const query = {
+          brandId,
+          modelId: car.id,
+        };
+        this.$router.push({ path: "/car", query });
+      }
+    },
+
+    loadBrand() {
+      const brand = this.brands.find((brand) => brand.name === this.brand);
+      if (brand) {
+        const query = {
+          brandId: brand.id,
+        };
+
+        this.$router.push({ path: "/", query });
+        this.$emit("loadCars", brand.id);
       }
     },
 
@@ -262,6 +305,8 @@ export default {
 
     resetFilters() {
       this.filtered = false;
+      this.brand = null;
+      this.model = null;
 
       const keys = Object.keys(this.filters);
       keys.forEach((key) => {
@@ -297,6 +342,10 @@ export default {
   form {
     width: 100%;
     padding: 10px;
+
+    @media (max-width: 768px) {
+      padding: 0;
+    }
 
     button {
       margin: 0 10px 20px 10px;

@@ -78,7 +78,6 @@ export default {
     page() {
       if (this.carPages >= 0) {
         this.$emit("setPage", this.page);
-        //this.filtersStore.filterCars();
       }
     },
   },
@@ -115,13 +114,13 @@ export default {
   }
 
   @media (max-width: 880px) {
+    padding: 0 0 50px 0;
+
     .wrap {
+      padding: 0;
+
       grid-template: repeat(9, auto) / 1fr;
     }
-  }
-
-  @media (max-width: 768px) {
-    padding: 0 0 50px 0;
   }
 }
 </style>

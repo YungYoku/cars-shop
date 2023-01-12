@@ -2,11 +2,10 @@
   <div class="home">
     <filters-area
       :brands="brands"
-      :car-names-list="carNamesList"
+      :cars="filteredCars"
       :propFiltered="filtered"
       @filterBrands="filterBrands"
       @filterCars="filterCars"
-      @loadCarNamesList="loadCarNamesList"
       @loadCars="loadCars"
       @reset="reset"
     />
@@ -50,8 +49,6 @@ export default {
       filteredCars: [],
       carPage: -1,
 
-      carNamesList: [],
-
       filtered: false,
     };
   },
@@ -89,16 +86,6 @@ export default {
       this.carPage = pagesAmount;
     },
 
-    setCarNamesList(list) {
-      if (list.length) {
-        list = list.map((el) => ({
-          text: el.model,
-          value: el.id,
-        }));
-      }
-      this.carNamesList = list;
-    },
-
     async loadBrands() {
       const docRef = doc(db, "cars", "brands");
       const docSnap = await getDoc(docRef);
@@ -108,7 +95,7 @@ export default {
         this.brands = brands;
         this.setBrands(brands);
 
-        sendAnalyticsRequest("loadBrands");
+        await sendAnalyticsRequest("loadBrands");
       }
     },
 
@@ -129,19 +116,8 @@ export default {
         this.setCarPage(-1);
         this.filtered = true;
 
-        sendAnalyticsRequest("loadCars");
+        await sendAnalyticsRequest("loadCars");
       }
-    },
-
-    loadCarNamesList(name) {
-      // if (name !== "") {
-      //   getData(`car/get-model-id?name=${name}`).then(({ ids: list }) => {
-      //     list = list || [];
-      //     this.setCarNamesList(list);
-      //   });
-      // } else {
-      //   this.setCarNamesList([]);
-      // }
     },
 
     filterCars(filters) {
@@ -171,10 +147,13 @@ export default {
 .home {
   display: grid;
   grid-template: auto / 200px 1fr;
+
   padding: 20px;
 
   @media (max-width: 768px) {
     grid-template: auto auto / 1fr;
+
+    padding: 10px;
   }
 }
 </style>

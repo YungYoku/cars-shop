@@ -55,7 +55,7 @@ export const useFavoriteStore = defineStore("favorite", {
         favorite: arrayUnion(car),
       });
 
-      sendAnalyticsRequest("addFavorite");
+      await sendAnalyticsRequest("addFavorite");
     },
 
     async remove(brandId, modelId) {
@@ -69,7 +69,7 @@ export const useFavoriteStore = defineStore("favorite", {
         }),
       });
 
-      sendAnalyticsRequest("removeFavorite");
+      await sendAnalyticsRequest("removeFavorite");
     },
   },
 });

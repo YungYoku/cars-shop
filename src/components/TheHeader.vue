@@ -13,12 +13,23 @@
         :to="link.url"
         exact-path
       >
+        <v-icon :icon="link.icon" />
         {{ link.title }}
       </router-link>
 
-      <the-header-admin-links />
+      <router-link
+        v-if="userStore.user.status === 'admin'"
+        exact-path
+        to="/admin"
+      >
+        <v-icon icon="mdi-security" />
+        Админка
+      </router-link>
 
-      <button v-if="userStore.isLoggedIn" @click="logout">ВЫЙТИ</button>
+      <button v-if="userStore.isLoggedIn" @click="logout">
+        <v-icon icon="mdi-exit-to-app" />
+        ВЫЙТИ
+      </button>
     </v-toolbar-items>
   </v-app-bar>
 
@@ -30,12 +41,23 @@
         :to="link.url"
         exact-path
       >
+        <v-icon :icon="link.icon" />
         {{ link.title }}
       </router-link>
 
-      <the-header-admin-links />
+      <router-link
+        v-if="userStore.user.status === 'admin'"
+        exact-path
+        to="/admin"
+      >
+        <v-icon icon="mdi-security" />
+        Админка
+      </router-link>
 
-      <button v-if="userStore.isLoggedIn" @click="logout">ВЫЙТИ</button>
+      <button v-if="userStore.isLoggedIn" @click="logout">
+        <v-icon icon="mdi-exit-to-app" />
+        ВЫЙТИ
+      </button>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -45,11 +67,9 @@ import { linksLogged, linksUnlogged } from "@/js/headerData.js";
 import { useUserStore } from "@/store/user";
 import { useSavedStore } from "@/store/myCars";
 import { useFavoriteStore } from "@/store/favorite";
-import TheHeaderAdminLinks from "@/components/TheHeaderAdminLinks.vue";
 
 export default {
   name: "the-header",
-  components: { TheHeaderAdminLinks },
 
   setup: () => ({
     userStore: useUserStore(),
@@ -93,10 +113,16 @@ export default {
 
 <style lang="scss">
 header {
-  backdrop-filter: blur(10px);
-
   &.v-app-bar.v-toolbar {
-    background-color: rgba(102, 135, 253, 0.7);
+    background-color: rgba(102, 135, 253, 1);
+  }
+
+  @supports (backdrop-filter: blur(20px)) {
+    backdrop-filter: blur(20px);
+
+    &.v-app-bar.v-toolbar {
+      background-color: rgba(102, 135, 253, 0.65);
+    }
   }
 
   .router-link-active {

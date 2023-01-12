@@ -1,17 +1,17 @@
-import logo from "../assets/logo.svg";
-
 export const linksLogged = [
   {
     title: "Главная",
     url: "/",
-    img: logo,
+    icon: "mdi-home",
   },
   {
     title: "Избранное",
+    icon: "mdi-star",
     url: "/favorite",
   },
   {
     title: "Корзина",
+    icon: "mdi-cart",
     url: "/shopCart",
   },
 ];
@@ -19,6 +19,7 @@ export const linksLogged = [
 export const linksUnlogged = [
   {
     title: "Войти",
+    icon: "mdi-login",
     url: "/login",
   },
 ];

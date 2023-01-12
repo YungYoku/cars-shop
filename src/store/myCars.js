@@ -55,7 +55,7 @@ export const useSavedStore = defineStore("saved", {
         saved: arrayUnion(car),
       });
 
-      sendAnalyticsRequest("addSaved");
+      await sendAnalyticsRequest("addSaved");
     },
 
     async remove(brandId, modelId) {
@@ -69,7 +69,7 @@ export const useSavedStore = defineStore("saved", {
         }),
       });
 
-      sendAnalyticsRequest("removeSaved");
+      await sendAnalyticsRequest("removeSaved");
     },
   },
 });

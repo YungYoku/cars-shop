@@ -130,7 +130,7 @@ export default {
         regDate: new Date(),
       });
 
-      sendAnalyticsRequest("addEmptyUserToDb");
+      await sendAnalyticsRequest("addEmptyUserToDb");
     },
 
     async handleRegResponse(response) {

@@ -19,6 +19,8 @@
           {{ car.generation }}
         </v-card-subtitle>
 
+        <v-card-subtitle> {{ car.price }} ₽</v-card-subtitle>
+
         <v-card-text class="text--primary">
           <div>Страна: {{ car.country }}</div>
 
@@ -28,15 +30,15 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-btn v-if="isItMyCar(car)" icon text @click="removeCar(car)">
-            <v-icon icon="mdi-minus" size="24px" />
-          </v-btn>
-          <v-btn v-else icon text @click="addCar(car)">
-            <v-icon icon="mdi-plus" size="24px" />
-          </v-btn>
-          <v-btn icon text @click="removeFavorite(car)">
-            <v-icon icon="mdi-delete" size="24px" />
-          </v-btn>
+          <v-btn
+            v-if="isItMyCar(car)"
+            icon="mdi-cart-off"
+            text
+            @click="removeCar(car)"
+          />
+          <v-btn v-else icon="mdi-cart" text @click="addCar(car)" />
+
+          <v-btn icon="mdi-star-off" text @click="removeFavorite(car)" />
         </v-card-actions>
       </v-card>
     </div>
@@ -84,6 +86,10 @@ export default {
 <style lang="scss" scoped>
 .favourite {
   padding: 20px;
+
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
 
   .wrap {
     margin: 0 0 10px 0;

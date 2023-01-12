@@ -12,7 +12,7 @@
         <tr v-for="user in users" :key="user.date">
           <td>{{ user.id }}</td>
           <td>{{ user.name }}</td>
-          <td>{{ user.regDate }}</td>
+          <td>{{ getDate(user.regDate) }}</td>
         </tr>
       </tbody>
     </v-table>
@@ -54,7 +54,22 @@ export default {
 
       this.users = users;
 
-      sendAnalyticsRequest("loadUsers");
+      await sendAnalyticsRequest("loadUsers");
+    },
+
+    getDate({ seconds }) {
+      const date = new Date(1970, 0, 1);
+
+      if (seconds) {
+        date.setSeconds(seconds);
+        return `
+          ${date.getDate()}.
+          ${date.getMonth() + 1}.
+          ${date.getFullYear()}
+        `;
+      }
+
+      return "Пусто";
     },
   },
 };

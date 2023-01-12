@@ -61,9 +61,6 @@ export default {
   },
 
   methods: {
-    requestTypes() {
-      return requestTypes;
-    },
     async load() {
       this.analytics = await getAnalytics();
     },

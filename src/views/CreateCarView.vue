@@ -74,7 +74,7 @@ function v4() {
 }
 
 export default {
-  name: "create-car-view",
+  name: "create-brand-view",
 
   data() {
     return {
@@ -131,7 +131,7 @@ export default {
         [brandId]: arrayUnion({ id: v4(), ...this.car }),
       });
 
-      sendAnalyticsRequest("createCar");
+      await sendAnalyticsRequest("createCar");
     },
 
     getBrandId(brandName) {

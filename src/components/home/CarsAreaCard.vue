@@ -5,6 +5,7 @@
 
       <v-card-title> {{ car.model }}</v-card-title>
       <v-card-subtitle> {{ car.generation }}</v-card-subtitle>
+      <v-card-subtitle> {{ car.price }} ₽</v-card-subtitle>
 
       <v-card-actions>
         <v-btn class="open" color="orange lighten-2" text @click="loadCar">
@@ -48,9 +49,12 @@
 
 <script>
 import image from "@/assets/image.png";
+import { useLoadingStore } from "@/store/loading";
 
 export default {
   name: "car-card",
+
+  setup: () => ({ loadingStore: useLoadingStore() }),
 
   props: {
     car: {
@@ -65,13 +69,18 @@ export default {
   }),
 
   methods: {
-    loadCar() {
+    async loadCar() {
+      this.loadingStore.start();
+
       const brandId = this.$route.query.brandId;
       const query = {
         brandId,
         modelId: this.$props.car.id,
       };
-      this.$router.push({ path: "/car", query });
+
+      await this.$router.push({ path: "/car", query });
+
+      this.loadingStore.end();
     },
 
     swapDescription() {

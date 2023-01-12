@@ -3,10 +3,8 @@ import { useUserStore } from "@/store/user";
 
 const isAdmin = () => {
   const userStore = useUserStore();
-  if (userStore.user.status === "admin") {
-    return true;
-  }
-  return false;
+
+  return userStore.user.status === "admin";
 };
 
 const routes = [
@@ -92,6 +90,25 @@ const routes = [
       layout: "default",
       title: "Пользователи",
     },
+    beforeEnter: () => {
+      if (isAdmin()) return true;
+      return "/";
+    },
+  },
+
+  {
+    path: "/admin",
+    name: "Admin",
+    component: () => import("@/views/AdminView.vue"),
+    meta: {
+      auth: true,
+      layout: "default",
+      title: "Админ панель",
+    },
+    beforeEnter: () => {
+      if (isAdmin()) return true;
+      return "/";
+    },
   },
 
   {
@@ -102,6 +119,21 @@ const routes = [
       auth: true,
       layout: "default",
       title: "Создание машины",
+    },
+    beforeEnter: () => {
+      if (isAdmin()) return true;
+      return "/";
+    },
+  },
+
+  {
+    path: "/createBrand",
+    name: "CreateBrand",
+    component: () => import("@/views/CreateBrandView.vue"),
+    meta: {
+      auth: true,
+      layout: "default",
+      title: "Создание бренда",
     },
     beforeEnter: () => {
       if (isAdmin()) return true;

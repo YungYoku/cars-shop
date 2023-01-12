@@ -45,9 +45,12 @@
 
 <script>
 import image from "@/assets/image.png";
+import { useLoadingStore } from "@/store/loading";
 
 export default {
   name: "brand-card",
+
+  setup: () => ({ loadingStore: useLoadingStore() }),
 
   props: {
     brand: {
@@ -70,13 +73,17 @@ export default {
   },
 
   methods: {
-    open() {
+    async open() {
+      this.loadingStore.start();
+
       const query = {
         brandId: this.$props.brand.id,
       };
 
-      this.$router.push({ path: "/", query });
       this.$emit("loadCars", this.$props.brand.id);
+      await this.$router.push({ path: "/", query });
+
+      this.loadingStore.end();
     },
 
     swapDescription() {
